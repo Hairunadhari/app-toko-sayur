@@ -20,7 +20,7 @@ class _ShopPageState extends State<ShopPage> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('${shoe.name} (Size: $selectedSize) berhasil ditambahkan ke keranjang!'),
+        content: Text('${shoe.name} (Size: $selectedSize) Successfully added to Book Shoes'),
         duration: const Duration(seconds: 1),
         backgroundColor: Colors.black87,
         behavior: SnackBarBehavior.floating,
@@ -153,7 +153,7 @@ class _ShopPageState extends State<ShopPage> {
                     }
                   },
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
-                  child: const Text('Add to Cart'),
+                  child: const Text('Booking Shoes'),
                 ),
               ],
             );
@@ -182,7 +182,7 @@ class _ShopPageState extends State<ShopPage> {
         }
 
         if (allAvailableShoes.isEmpty) {
-          return const Center(child: Text('No products available locally.'));
+          return const Center(child: Text('No products available.'));
         }
 
         return Scaffold(
@@ -260,7 +260,7 @@ class _ShopPageState extends State<ShopPage> {
                           ),
                           child: TextField(
                             decoration: InputDecoration(
-                              hintText: 'Search the entire shop',
+                              hintText: 'Search the entire Products',
                               hintStyle: TextStyle(color: Colors.grey[600]),
                               prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
                               border: InputBorder.none,

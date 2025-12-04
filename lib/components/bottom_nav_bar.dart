@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-// import 'package:google_nav_bar/google_nav_bar.dart';
 
 class MyBottomNavBar extends StatelessWidget {
   final Function(int) onTabChange;
@@ -45,8 +44,8 @@ class MyBottomNavBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           buildNavBarItem(Icons.home, 'Home', 0),
-          buildNavBarItem(Icons.shopping_bag, 'Cart', 1),
-          buildNavBarItem(Icons.grid_view, 'Shop', 2),
+          buildNavBarItem(Icons.shopping_bag, 'Booking', 1),
+          buildNavBarItem(Icons.grid_view, 'Products  ', 2),
           buildNavBarItem(Icons.settings, 'Settings', 3),
           buildNavBarItem(Icons.person, 'Profile', 4),
         ],

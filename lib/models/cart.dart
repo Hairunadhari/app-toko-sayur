@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shoenew/models/shoe.dart';
 import 'package:shoenew/models/cart_item.dart';
+import 'package:shoenew/models/booking_detail.dart';
 
 class Cart extends ChangeNotifier {
   // list of shoes for sale
-  // SETIAP Shoe memiliki `availableSizes` yang terdefinisi
   final List<Shoe> _shoeShop = [
     Shoe(
       name: 'Nike Air Jordan 11',
@@ -71,48 +71,59 @@ class Cart extends ChangeNotifier {
       availableSizes: ['US 8', 'US 9', 'US 10', 'US 11'],
     ),
     Shoe(
-      name: 'Nike Revolution 7',
+      name: 'Nike Kids - Black',
       price: '125',
       imagePath: 'lib/images/NikeKids-black.png',
-      description: 'Nike Revolution 7. Smooth comfort. Easy miles. Your essential everyday runner.',
+      description: 'Vintage Look',
       gender: 'Kids',
       availableSizes: ['K 1', 'K 2', 'K 3'],
     ),
     Shoe(
-      name: ' Nike Air Max TW',
+      name: 'Nike Kids - Blue',
       price: '135',
       imagePath: 'lib/images/NikeKids-blue.png',
-      description: 'Nike Air Max TW. Max Air. Max Style. Unleash your bold side.',
+      description: 'Vintage Look',
       gender: 'Kids',
       availableSizes: ['K 1', 'K 2', 'K 3'],
     ),
     Shoe(
-      name: 'Nike Air Swoopes II',
+      name: 'Nike Kids - White',
       price: '120',
       imagePath: 'lib/images/NikeKids-white.png',
-      description: 'Nike Air Swoopes II. Iconic design. Unforgettable style. A true legend.',
+      description: 'Vintage Look',
       gender: 'Kids',
       availableSizes: ['K 1', 'K 2', 'K 3'],
     ),
     Shoe(
-      name: 'Nike Infinity RN 4',
+      name: 'Nike Run',
       price: '130',
       imagePath: 'lib/images/NikeRunW.png',
-      description: 'Nike Infinity RN 4. Max comfort. Max support. Your everyday run, reimagined.',
-      gender: 'Men',
+      description: 'Vintage Look',
+      gender: 'Women',
       availableSizes: ['US 6', 'US 7', 'US 8'],
     ),
   ];
 
-  List<CartItem> _userCart = []; // List<CartItem>
+  List<CartItem> _userCart = [];
+
+  // --- WISHLIST RELATED PROPERTIES & METHODS ---
+  List<Shoe> _wishlist = [];
 
   // --- DATA PROFIL DAN ALAMAT PENGIRIMAN ---
-  // SEMUA INI NON-NULLABLE DAN PUNYA NILAI DEFAULT
   String _userName = 'Alif Minda';
   String _userEmail = 'alifmind@badassatron.com';
   String _userPhone = '+62 812 3456 7890';
   String _deliveryAddress = '92 High Street, Depok';
   String _userAvatarUrl = 'https://via.placeholder.com/150';
+
+  // --- NEW: PAST BOOKINGS ---
+  List<BookingDetail> _pastBookings = [];
+
+  // --- GETTERS YANG BENAR ---
+  List<Shoe> get shoeShop => _shoeShop;
+  List<CartItem> get userCart => _userCart;
+  List<Shoe> get wishlist => _wishlist;
+  List<BookingDetail> get pastBookings => _pastBookings;
 
   String get userName => _userName;
   String get userEmail => _userEmail;
@@ -120,6 +131,25 @@ class Cart extends ChangeNotifier {
   String get deliveryAddress => _deliveryAddress;
   String get userAvatarUrl => _userAvatarUrl;
 
+  // --- METODE WISHLIST ---
+  void addToWishlist(Shoe shoe) {
+    if (!_wishlist.contains(shoe)) {
+      _wishlist.add(shoe);
+      notifyListeners();
+    }
+  }
+
+  void removeFromWishlist(Shoe shoe) {
+    _wishlist.remove(shoe);
+    notifyListeners();
+  }
+
+  bool isFavorite(Shoe shoe) {
+    return _wishlist.contains(shoe);
+  }
+  // --- AKHIR WISHLIST ---
+
+  // --- METODE PROFIL ---
   void updateProfile({String? name, String? email, String? phone, String? address, String? avatarUrl}) {
     if (name != null) _userName = name;
     if (email != null) _userEmail = email;
@@ -128,10 +158,9 @@ class Cart extends ChangeNotifier {
     if (avatarUrl != null) _userAvatarUrl = avatarUrl;
     notifyListeners();
   }
+  // --- AKHIR PROFIL ---
 
-  List<Shoe> get shoeShop => _shoeShop;
-  List<CartItem> get userCart => _userCart; // INI List<CartItem>
-
+  // --- METODE KERANJANG UTAMA ---
   void addItemToCart(Shoe shoe, String selectedSize) {
     bool found = false;
     for (var item in _userCart) {
@@ -147,7 +176,7 @@ class Cart extends ChangeNotifier {
     notifyListeners();
   }
 
-  void removeItemFromCart(CartItem cartItem) { // PARAMETER CartItem
+  void removeItemFromCart(CartItem cartItem) {
     _userCart.removeWhere((item) => item.shoe == cartItem.shoe && item.selectedSize == cartItem.selectedSize);
     notifyListeners();
   }
@@ -185,6 +214,13 @@ class Cart extends ChangeNotifier {
     }
     notifyListeners();
   }
+  // --- AKHIR METODE KERANJANG UTAMA ---
+
+  // --- METODE BOOKING ---
+  void addBooking(BookingDetail booking) {
+    _pastBookings.add(booking);
+    notifyListeners();
+  }
 
   String calculateTotal() {
     double total = 0;
@@ -193,4 +229,5 @@ class Cart extends ChangeNotifier {
     }
     return total.toStringAsFixed(2);
   }
+// --- AKHIR METHOD BOOKING ---
 }

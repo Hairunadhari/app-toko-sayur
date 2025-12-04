@@ -40,7 +40,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('${widget.shoe.name} (Size: ${_selectedSize!}) added to cart!'),
+        content: Text('${widget.shoe.name} (Size: ${_selectedSize!}) Booking Shoes!'),
         backgroundColor: Colors.black87,
         duration: const Duration(seconds: 2),
       ),
@@ -176,7 +176,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 ),
               ),
               child: const Text(
-                'Add to Cart',
+                'Booking Shoes',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),

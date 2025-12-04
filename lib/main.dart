@@ -3,8 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shoenew/models/cart.dart';
 import 'package:shoenew/pages/intro_page.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
+void main() async {
+  await Supabase.initialize(
+    url: 'https://xyzcompany.supabase.co',
+    anonKey: 'publishable-or-anon-key',
+  );
+
   runApp(const MyApp());
 }
 

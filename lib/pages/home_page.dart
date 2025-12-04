@@ -6,6 +6,8 @@ import 'package:shoenew/pages/products_page.dart';
 import 'package:shoenew/pages/settings_page.dart';
 import 'package:shoenew/pages/profile_page.dart';
 import 'package:shoenew/pages/intro_page.dart';
+import 'package:shoenew/pages/wishlist_page.dart';
+import 'package:shoenew/pages/my_orders_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -23,12 +25,13 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  // DAFTAR HALAMAN
   final List<Widget> _pages = [
-    const ShopPage(),
-    const CartPage(),
-    const ProductsPage(),
-    const SettingsPage(),
-    const ProfilePage(),
+    const ShopPage(),       // Index 0
+    const CartPage(),       // Index 1
+    const ProductsPage(),   // Index 2
+    const SettingsPage(),   // Index 3
+    const ProfilePage(),    // Index 4
   ];
 
   void signOut() async {
@@ -40,6 +43,17 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  String _getAppBarTitle() {
+    switch (_selectedIndex) {
+      case 0: return 'Shop';
+      case 1: return 'My Cart';
+      case 2: return 'All Products';
+      case 3: return 'Settings';
+      case 4: return 'Profile';
+      default: return 'ShoeNew App';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,12 +63,12 @@ class _HomePageState extends State<HomePage> {
         selectedIndex: _selectedIndex,
       ),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+        backgroundColor: Colors.grey[100],
+        elevation: 1,
         leading: Builder(
           builder: (context) => IconButton(
             icon: const Padding(
-              padding: EdgeInsets.only(left: 20.0),
+              padding: EdgeInsets.only(left: 8.0),
               child: Icon(
                 Icons.menu,
                 color: Colors.black,
@@ -65,15 +79,20 @@ class _HomePageState extends State<HomePage> {
             },
           ),
         ),
+        title: Text(
+          _getAppBarTitle(),
+          style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
       ),
       drawer: Drawer(
           backgroundColor: Colors.grey[900],
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column( // Bagian atas Drawer
+              Column(
                 children: [
-                  // Logo Nike
+                  // Logo
                   DrawerHeader(
                     child: Image.asset(
                         'lib/images/Logo.png',
@@ -88,63 +107,59 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
 
-                  // Pesanan Saya
-                  Padding( // <-- HAPUS 'const' DI SINI
+                  // My Orders (SEKARANG DENGAN NAVIGASI)
+                  Padding(
                     padding: const EdgeInsets.only(left: 25.0),
-                    child: ListTile( // <-- HAPUS 'const' DI SINI
+                    child: ListTile(
                       leading: const Icon(Icons.receipt_long, color: Colors.white),
                       title: const Text('My Orders', style: TextStyle(color: Colors.white)),
-                      onTap: () { // Fungsi literal ini tidak konstan
-                        // TODO: Navigasi ke halaman Pesanan Saya
+                      onTap: () {
                         Navigator.pop(context); // Tutup drawer
-                        print('My Orders clicked');
+                        // Navigasi ke halaman MyOrdersPage
+                        Navigator.push( // <-- TAMBAHKAN NAVIGASI INI
+                          context,
+                          MaterialPageRoute(builder: (context) => const MyOrdersPage()),
+                        );
                       },
                     ),
                   ),
 
-                  // Daftar Keinginan
-                  Padding( // <-- HAPUS 'const' DI SINI
+                  // My Wishlist
+                  Padding(
                     padding: const EdgeInsets.only(left: 25.0),
-                    child: ListTile( // <-- HAPUS 'const' DI SINI
+                    child: ListTile(
                       leading: const Icon(Icons.favorite_border, color: Colors.white),
                       title: const Text('My Wishlist', style: TextStyle(color: Colors.white)),
-                      onTap: () { // Fungsi literal ini tidak konstan
-                        // TODO: Navigasi ke halaman Daftar Keinginan
-                        Navigator.pop(context); // Tutup drawer
-                        print('My Wishlist clicked');
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const WishlistPage()));
                       },
                     ),
                   ),
 
-                  // Bantuan & Dukungan
-                  Padding( // <-- HAPUS 'const' DI SINI
+                  // Help & Support
+                  Padding(
                     padding: const EdgeInsets.only(left: 25.0),
-                    child: ListTile( // <-- HAPUS 'const' DI SINI
+                    child: ListTile(
                       leading: const Icon(Icons.help_outline, color: Colors.white),
                       title: const Text('Help & Support', style: TextStyle(color: Colors.white)),
-                      onTap: () { // Fungsi literal ini tidak konstan
+                      onTap: () {
+                        Navigator.pop(context);
                         // TODO: Navigasi ke halaman Bantuan & Dukungan
-                        Navigator.pop(context); // Tutup drawer
                         print('Help & Support clicked');
                       },
                     ),
                   ),
 
-                  // Tentang Kami
-                  Padding( // <-- HAPUS 'const' DI SINI
+                  // About page
+                  Padding(
                     padding: const EdgeInsets.only(left: 25.0),
-                    child: ListTile( // <-- HAPUS 'const' DI SINI
-                      leading: const Icon(
-                        Icons.info,
-                        color: Colors.white,
-                      ),
-                      title: const Text(
-                        'About',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      onTap: () { // Fungsi literal ini tidak konstan
+                    child: ListTile(
+                      leading: const Icon(Icons.info, color: Colors.white,),
+                      title: const Text('About', style: TextStyle(color: Colors.white),),
+                      onTap: () {
+                        Navigator.pop(context);
                         // TODO: Navigasi ke halaman Tentang Kami
-                        Navigator.pop(context); // Tutup drawer
                         print('About clicked');
                       },
                     ),
@@ -152,10 +167,10 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
 
-              // Tombol Logout di paling bawah
-              Padding( // <-- HAPUS 'const' DI SINI
+              // Tombol Logout
+              Padding(
                 padding: const EdgeInsets.only(left: 25.0, bottom: 25),
-                child: ListTile( // <-- HAPUS 'const' DI SINI
+                child: ListTile(
                   leading: const Icon(
                     Icons.logout,
                     color: Colors.white,

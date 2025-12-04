@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shoenew/models/cart.dart';
-import 'package:shoenew/models/shoe.dart'; // untuk detail Shoe
+import 'package:shoenew/models/shoe.dart';
 import 'package:shoenew/models/cart_item.dart';
+import 'package:shoenew/models/booking_detail.dart';
+import 'package:shoenew/pages/my_orders_page.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({super.key});
@@ -13,11 +15,11 @@ class CartPage extends StatefulWidget {
 
 class _CartPageState extends State<CartPage> {
   // Method untuk menghapus item dari keranjang
-  void removeItemFromCart(CartItem cartItem) { // Parameter harus CartItem
-    Provider.of<Cart>(context, listen: false).removeItemFromCart(cartItem); // Teruskan CartItem
+  void removeItemFromCart(CartItem cartItem) {
+    Provider.of<Cart>(context, listen: false).removeItemFromCart(cartItem);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('${cartItem.shoe.name} (Size: ${cartItem.selectedSize}) dihapus dari keranjang.'),
+        content: Text('${cartItem.shoe.name} (Size: ${cartItem.selectedSize}) removed from Booking Shoes.'),
         duration: const Duration(seconds: 1),
         backgroundColor: Colors.black87,
       ),
@@ -31,7 +33,11 @@ class _CartPageState extends State<CartPage> {
 
   // Method untuk mengurangi kuantitas
   void decrementItemQuantity(CartItem cartItem) {
-    Provider.of<Cart>(context, listen: false).decrementQuantity(cartItem);
+    if (cartItem.quantity > 1) {
+      cartItem.quantity--;
+    } else {
+      Provider.of<Cart>(context, listen: false).removeItemFromCart(cartItem);
+    }
   }
 
   // Fungsi untuk menampilkan dialog edit ukuran
@@ -112,6 +118,74 @@ class _CartPageState extends State<CartPage> {
     );
   }
 
+  void _showBookingConfirmationDialog(BuildContext context, String totalAmount) {
+    String bookingId = 'BKNG-${DateTime.now().millisecondsSinceEpoch % 100000}';
+    String bookingDate = DateTime.now().toLocal().toString().split(' ')[0];
+    String barcodePath = 'lib/images/Code-128.png';
+
+    final cart = Provider.of<Cart>(context, listen: false);
+    List<CartItem> bookedItems = List.from(cart.userCart);
+
+    BookingDetail newBooking = BookingDetail(
+      bookingId: bookingId,
+      date: bookingDate,
+      totalAmount: totalAmount,
+      barcodeImagePath: barcodePath,
+      bookedItems: bookedItems,
+    );
+
+    cart.addBooking(newBooking);
+    cart.userCart.clear();
+    cart.notifyListeners();
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Booking Confirmed!', textAlign: TextAlign.center),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('Your booking is confirmed!'),
+                const SizedBox(height: 20),
+                const Text(
+                  'Please present this barcode at the store for pickup.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16),
+                ),
+                const SizedBox(height: 20),
+                Image.asset(
+                  newBooking.barcodeImagePath,
+                  height: 150,
+                  width: 250,
+                  fit: BoxFit.contain,
+                ),
+                const SizedBox(height: 20),
+                Text('Booking ID: #${newBooking.bookingId}'),
+                Text('Date: ${newBooking.date}'),
+                Text('Total: \$${newBooking.totalAmount}'),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MyOrdersPage()),
+                );
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<Cart>(
@@ -123,24 +197,20 @@ class _CartPageState extends State<CartPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'My Cart',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28, color: Colors.black),
-                ),
-                const SizedBox(height: 20),
+                SizedBox(height: MediaQuery.of(context).padding.top + kToolbarHeight + 10),
 
                 Expanded(
                   child: cart.userCart.isEmpty
                       ? Center(
                     child: Text(
-                      'Your cart is empty!',
+                      'Your Booking Shoes is empty!',
                       style: TextStyle(fontSize: 18, color: Colors.grey[600]),
                     ),
                   )
                       : ListView.builder(
                     itemCount: cart.userCart.length,
                     itemBuilder: (context, index) {
-                      final cartItem = cart.userCart[index]; // Use final for good practice
+                      final cartItem = cart.userCart[index];
 
                       return Container(
                         decoration: BoxDecoration(
@@ -271,13 +341,16 @@ class _CartPageState extends State<CartPage> {
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          print('Proceed to Checkout! Total: \$${cart.calculateTotal()}');
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Checkout feature is not implemented yet!'),
-                              backgroundColor: Colors.black87,
-                            ),
-                          );
+                          if (cart.userCart.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Your Booking Shoes is empty. Add items first!'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                            return;
+                          }
+                          _showBookingConfirmationDialog(context, cart.calculateTotal());
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.black,
@@ -288,7 +361,7 @@ class _CartPageState extends State<CartPage> {
                           ),
                         ),
                         child: const Text(
-                          'Checkout',
+                          'Booking Now',
                           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                       ),

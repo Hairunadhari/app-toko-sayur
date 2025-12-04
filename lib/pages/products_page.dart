@@ -12,13 +12,12 @@ class ProductsPage extends StatefulWidget {
 }
 
 class _ProductsPageState extends State<ProductsPage> {
-  // Method untuk menambahkan sepatu ke keranjang
   void addShoeToCart(Shoe shoe, String selectedSize) {
     Provider.of<Cart>(context, listen: false).addItemToCart(shoe, selectedSize);
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('${shoe.name} (Size: $selectedSize) berhasil ditambahkan ke keranjang!'),
+        content: Text('${shoe.name} (Size: $selectedSize) successfully added to Booking!'),
         duration: const Duration(seconds: 1),
         backgroundColor: Colors.black87,
         behavior: SnackBarBehavior.floating,
@@ -26,14 +25,13 @@ class _ProductsPageState extends State<ProductsPage> {
     );
   }
 
-  // Metode untuk menampilkan pop-up pemilihan ukuran (DIGUNAKAN DI PRODUCTSPAGE)
   void _showSizeSelectionDialog(Shoe shoe) {
     String? tempSelectedSize = shoe.availableSizes.isNotEmpty ? shoe.availableSizes.first : null;
 
     showDialog(
       context: context,
       builder: (context) {
-        return StatefulBuilder( // Use StatefulBuilder to manage dialog's internal state
+        return StatefulBuilder(
           builder: (context, setStateInDialog) {
             return AlertDialog(
               title: Text('Select Size for ${shoe.name}'),
@@ -50,7 +48,7 @@ class _ProductsPageState extends State<ProductsPage> {
                       final bool isSelected = tempSelectedSize == size;
                       return GestureDetector(
                         onTap: () {
-                          setStateInDialog(() { // Update state within the dialog
+                          setStateInDialog(() {
                             tempSelectedSize = size;
                           });
                         },
@@ -79,46 +77,94 @@ class _ProductsPageState extends State<ProductsPage> {
                   onPressed: () => Navigator.pop(context),
                   child: const Text('Cancel'),
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    if (tempSelectedSize != null) {
-                      addShoeToCart(shoe, tempSelectedSize!); // Call addShoeToCart with selected size
-                      Navigator.pop(context); // Close dialog
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Please select a size!')),
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
-                  child: const Text('Add to Cart'),
-                ),
-              ],
-            );
-          },
-        );
-      },
+    ElevatedButton(
+    onPressed: () {
+    if (tempSelectedSize != null) {
+    addShoeToCart(shoe, tempSelectedSize!);
+    Navigator.pop(context);
+    } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(content: Text('Please select a size!')),
     );
+    }
+    },
+    style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
+    child: const Text('Add to Cart'),
+    ),
+    ],
+    );
+    },
+    );
+  },
+  );
+}
+
+final List<String> _categories = ['All', 'Men', 'Women', 'Kids'];
+String _selectedCategory = 'All';
+
+@override
+Widget build(BuildContext context) {
+  final cart = Provider.of<Cart>(context);
+  List<Shoe> allProducts = cart.shoeShop;
+
+  List<Shoe> filteredShoes = allProducts.where((shoe) {
+    return (shoe.gender == _selectedCategory) || (_selectedCategory == 'All');
+  }).toList();
+
+  // Pastikan `allProducts` tidak kosong sebelum menampilkan widget
+  if (allProducts.isEmpty) {
+    return const Center(child: Text('No products available locally.'));
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final cart = Provider.of<Cart>(context);
-    List<Shoe> allProducts = cart.shoeShop;
+  return Scaffold(
+    backgroundColor: Colors.grey[200],
+    body: Padding(
+      padding: const EdgeInsets.all(25.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: MediaQuery.of(context).padding.top + kToolbarHeight + 10),
+          const Text(
+            'All Products',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 28,
+              color: Colors.black,
+            ),
+          ),
+          const SizedBox(height: 20),
 
-    return Scaffold(
-      backgroundColor: Colors.grey[200],
-      body: Padding(
-        padding: const EdgeInsets.all(25.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'All Products',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 28,
-                color: Colors.black,
+          SizedBox(
+            height: 40,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: _categories.length,
+              itemBuilder: (context, index) {
+                String category = _categories[index];
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _selectedCategory = category;
+                    });
+                  },
+                    child: Container(
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                      margin: const EdgeInsets.only(right: 10),
+                      decoration: BoxDecoration(
+                        color: _selectedCategory == category ? Colors.black : Colors.grey[300],
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        category,
+                        style: TextStyle(
+                          color: _selectedCategory == category ? Colors.white : Colors.grey[800],
+                          fontWeight: _selectedCategory == category ? FontWeight.bold : FontWeight.normal,
+                        ),
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
             const SizedBox(height: 20),
@@ -129,12 +175,13 @@ class _ProductsPageState extends State<ProductsPage> {
                   crossAxisCount: 2,
                   crossAxisSpacing: 15.0,
                   mainAxisSpacing: 15.0,
-                  childAspectRatio: 0.75,
+                  mainAxisExtent: 300.0,
                 ),
-                itemCount: allProducts.length,
+                itemCount: filteredShoes.length,
+                shrinkWrap: true,
+                physics: const AlwaysScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
-                  Shoe shoe = allProducts[index];
-                  // onAddTap sekarang akan memanggil dialog, bukan langsung addShoeToCart
+                  Shoe shoe = filteredShoes[index];
                   return ProductGridTile(
                     shoe: shoe,
                     onAddTap: () => _showSizeSelectionDialog(shoe),
@@ -157,10 +204,9 @@ class _ProductsPageState extends State<ProductsPage> {
   }
 }
 
-// ProductGridTile definition
+// ProductGridTile definition (dalam file yang sama)
 class ProductGridTile extends StatelessWidget {
   final Shoe shoe;
-  // onAddTap sekarang adalah VoidCallback
   final VoidCallback onAddTap;
   final VoidCallback? onTileTap;
 
@@ -173,6 +219,9 @@ class ProductGridTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cart = Provider.of<Cart>(context);
+    bool isFav = cart.isFavorite(shoe);
+
     return GestureDetector(
       onTap: onTileTap,
       child: Container(
@@ -191,14 +240,50 @@ class ProductGridTile extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.asset(
-                  shoe.imagePath,
-                  fit: BoxFit.cover,
+            Stack(
+              children: [
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.asset(
+                      shoe.imagePath,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                    ),
+                  ),
                 ),
-              ),
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: GestureDetector(
+                    onTap: () {
+                      if (isFav) {
+                        cart.removeFromWishlist(shoe);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('${shoe.name} removed from wishlist!')),
+                        );
+                      } else {
+                        cart.addToWishlist(shoe);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('${shoe.name} added to wishlist!')),
+                        );
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.8),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        isFav ? Icons.favorite : Icons.favorite_border,
+                        color: isFav ? Colors.red : Colors.grey,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -220,7 +305,7 @@ class ProductGridTile extends StatelessWidget {
                         style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[800]),
                       ),
                       GestureDetector(
-                        onTap: onAddTap, // onAddTap tanpa parameter
+                        onTap: onAddTap,
                         child: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(

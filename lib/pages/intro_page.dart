@@ -1,3 +1,4 @@
+// lib/pages/intro_page.dart
 import 'package:flutter/material.dart';
 import 'package:shoenew/pages/home_page.dart';
 import 'package:shoenew/pages/register_page.dart';
@@ -47,14 +48,13 @@ class _IntroPageState extends State<IntroPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[200],
-      // default, resizeToAvoidBottomInset true,
-      body: Center( // untuk memusatkan konten secara horizontal
-        child: SingleChildScrollView( // Membuat konten digulir
-          padding: const EdgeInsets.symmetric(horizontal: 25.0), // Padding untuk area yang digulir
+      resizeToAvoidBottomInset: true,
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 25.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center, // Memusatkan konten secara vertikal ke SingleChildScrollView
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Logo Nike
               Padding(
                 padding: const EdgeInsets.only(bottom: 50.0),
                 child: Image.asset(
@@ -83,7 +83,6 @@ class _IntroPageState extends State<IntroPage> {
               ),
               const SizedBox(height: 50),
 
-              // Username / Email TextField
               TextField(
                 controller: _usernameController,
                 decoration: InputDecoration(
@@ -104,7 +103,6 @@ class _IntroPageState extends State<IntroPage> {
               ),
               const SizedBox(height: 15),
 
-              // Password TextField
               TextField(
                 controller: _passwordController,
                 obscureText: true,
@@ -126,7 +124,6 @@ class _IntroPageState extends State<IntroPage> {
               ),
               const SizedBox(height: 15),
 
-              // Remember me & Forgot Password
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -163,7 +160,6 @@ class _IntroPageState extends State<IntroPage> {
               ),
               const SizedBox(height: 30),
 
-              // Login Button
               ElevatedButton(
                 onPressed: _handleLogin,
                 style: ElevatedButton.styleFrom(
@@ -181,7 +177,6 @@ class _IntroPageState extends State<IntroPage> {
               ),
               const SizedBox(height: 20),
 
-              // Divider "Or continue with"
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: Row(
@@ -210,7 +205,6 @@ class _IntroPageState extends State<IntroPage> {
               ),
               const SizedBox(height: 20),
 
-              // Google Login Button
               GestureDetector(
                 onTap: _handleGoogleRegister,
                 child: Container(
@@ -228,7 +222,6 @@ class _IntroPageState extends State<IntroPage> {
               ),
               const SizedBox(height: 20),
 
-              // Don't have an account? Register now
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -254,9 +247,7 @@ class _IntroPageState extends State<IntroPage> {
                   ),
                 ],
               ),
-
               const SizedBox(height: 50),
-
             ],
           ),
         ),

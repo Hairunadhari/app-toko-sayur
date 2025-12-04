@@ -1,3 +1,4 @@
+// lib/pages/register_page.dart
 import 'package:flutter/material.dart';
 import 'package:shoenew/pages/home_page.dart';
 
@@ -64,13 +65,12 @@ class _RegisterPageState extends State<RegisterPage> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Center( // Memusatkan konten secara horizontal
-        child: SingleChildScrollView( // Membuat konten dapat digulir
-          padding: const EdgeInsets.symmetric(horizontal: 25.0), // Padding untuk area yang digulir
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 25.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center, // Memusatkan konten secara vertikal
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Logo Nike
               Padding(
                 padding: const EdgeInsets.only(bottom: 30.0),
                 child: Image.asset(
@@ -99,7 +99,6 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               const SizedBox(height: 50),
 
-              // Email TextField
               TextField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
@@ -121,7 +120,6 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               const SizedBox(height: 15),
 
-              // Password TextField
               TextField(
                 controller: _passwordController,
                 obscureText: true,
@@ -143,7 +141,6 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               const SizedBox(height: 15),
 
-              // Confirm Password TextField
               TextField(
                 controller: _confirmPasswordController,
                 obscureText: true,
@@ -165,7 +162,6 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               const SizedBox(height: 30),
 
-              // Register Button
               ElevatedButton(
                 onPressed: _handleRegister,
                 style: ElevatedButton.styleFrom(
@@ -183,7 +179,6 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               const SizedBox(height: 20),
 
-              // Divider "Or continue with"
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: Row(
@@ -212,7 +207,6 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               const SizedBox(height: 20),
 
-              // Google Register Button
               GestureDetector(
                 onTap: _handleGoogleRegister,
                 child: Container(
@@ -230,7 +224,6 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               const SizedBox(height: 20),
 
-              // Already have an account? Login now
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -253,9 +246,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ],
               ),
-
               const SizedBox(height: 50),
-
             ],
           ),
         ),

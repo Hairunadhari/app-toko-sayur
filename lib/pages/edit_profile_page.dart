@@ -22,7 +22,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Gunakan listen: false karena hanya membaca nilai awal untuk controller
     // Consumer atau Selector akan menangani rebuild jika data berubah
     final cart = Provider.of<Cart>(context, listen: false);
 
