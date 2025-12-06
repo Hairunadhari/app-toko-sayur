@@ -7,8 +7,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
   await Supabase.initialize(
-    url: 'https://xyzcompany.supabase.co',
-    anonKey: 'publishable-or-anon-key',
+    url: 'https://luzzeizpeannziurkzmk.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx1enplaXpwZWFubnppdXJrem1rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQzOTM2MTMsImV4cCI6MjA3OTk2OTYxM30.Wy0SO7kZdk_8yMsiUxDO6KD72Y7tz1wevorGr7ELXE4',
   );
 
   runApp(const MyApp());

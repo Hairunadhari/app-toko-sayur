@@ -3,22 +3,46 @@ import 'package:provider/provider.dart';
 import 'package:shoenew/models/shoe.dart';
 import 'package:shoenew/models/cart.dart';
 import 'package:shoenew/pages/product_detail_page.dart';
+import 'package:intl/intl.dart'; // Import paket intl untuk format mata uang
 
 // ignore: must_be_immutable
 class ShoeTile extends StatelessWidget {
   Shoe shoe;
   final VoidCallback onAddTap;
 
-  ShoeTile({
-    super.key,
-    required this.shoe,
-    required this.onAddTap,
-  });
+  ShoeTile({super.key, required this.shoe, required this.onAddTap});
+
+  // Helper function untuk memformat harga ke format Rupiah (misal: 200.000)
+  String _formatPrice(dynamic price) {
+    // 1. Konversi ke double
+    double numericPrice;
+    if (price is String) {
+      // Hapus karakter non-digit kecuali titik/koma jika ada, lalu konversi
+      numericPrice = double.tryParse(price.replaceAll(RegExp(r'[^\d.]'), '')) ?? 0.0;
+    } else if (price is num) {
+      numericPrice = price.toDouble();
+    } else {
+      numericPrice = 0.0;
+    }
+    
+    // 2. Format menggunakan NumberFormat dari paket intl
+    final formatter = NumberFormat.currency(
+      locale: 'id_ID', // Lokasi Indonesia
+      symbol: 'Rp',     // Simbol Rupiah
+      decimalDigits: 0, // Tidak ada desimal untuk harga bulat
+    );
+
+    return formatter.format(numericPrice);
+  }
 
   @override
   Widget build(BuildContext context) {
     final cart = Provider.of<Cart>(context);
     bool isFav = cart.isFavorite(shoe);
+
+    // Mengubah tipe data price menjadi String untuk pemanggilan _formatPrice
+    // Jika model Shoe.price Anda sebenarnya double/int, ubah parameter _formatPrice ke tipe yang benar.
+    final formattedPrice = _formatPrice(shoe.price); 
 
     return GestureDetector(
       onTap: () {
@@ -43,17 +67,37 @@ class ShoeTile extends StatelessWidget {
               children: [
                 Center(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 10.0),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 15.0, 
+                      vertical: 10.0,
+                    ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12),
-                      child: Image.asset(
+                      child: Image.network(
                         shoe.imagePath,
                         fit: BoxFit.cover,
                         height: 180,
+                        alignment: Alignment.center, 
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return SizedBox(
+                            height: 180,
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                value: loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes!
+                                    : null,
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ),
                 ),
+
+                // Icon Favorite (Wishlist)
                 Positioned(
                   top: 15,
                   right: 15,
@@ -62,12 +106,16 @@ class ShoeTile extends StatelessWidget {
                       if (isFav) {
                         cart.removeFromWishlist(shoe);
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('${shoe.name} removed from wishlist!')),
+                          SnackBar(
+                            content: Text('${shoe.name} removed from wishlist!'),
+                          ),
                         );
                       } else {
                         cart.addToWishlist(shoe);
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('${shoe.name} added to wishlist!')),
+                          SnackBar(
+                            content: Text('${shoe.name} added to wishlist!'),
+                          ),
                         );
                       }
                     },
@@ -90,8 +138,13 @@ class ShoeTile extends StatelessWidget {
 
             const Spacer(),
 
+            // --- BAGIAN DETAIL PRODUK & TOMBOL ADD ---
             Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 0.0, bottom: 0.0),
+              padding: const EdgeInsets.only(
+                left: 25.0,
+                right: 0.0,
+                bottom: 0.0,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -100,7 +153,7 @@ class ShoeTile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        shoe.name,
+                        shoe.name, // Nama produk (e.g., Paket Sehat Harian)
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
@@ -109,12 +162,14 @@ class ShoeTile extends StatelessWidget {
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        '\$' + shoe.price,
+                        // MENGGUNAKAN FORMAT RUPIAH
+                        formattedPrice, 
                         style: TextStyle(color: Colors.grey[700]),
                       ),
                     ],
                   ),
 
+                  // Tombol ADD
                   GestureDetector(
                     onTap: onAddTap,
                     child: Container(

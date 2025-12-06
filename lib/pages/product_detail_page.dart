@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shoenew/models/shoe.dart';
 import 'package:shoenew/models/cart.dart';
+import 'package:intl/intl.dart';
 
 class ProductDetailPage extends StatefulWidget {
   final Shoe shoe;
@@ -13,21 +14,41 @@ class ProductDetailPage extends StatefulWidget {
 }
 
 class _ProductDetailPageState extends State<ProductDetailPage> {
-  String? _selectedSize;
+  String? _selectedUnit;
 
   @override
   void initState() {
     super.initState();
+
     if (widget.shoe.availableSizes.isNotEmpty) {
-      _selectedSize = widget.shoe.availableSizes.first;
+      _selectedUnit = widget.shoe.availableSizes.first;
     }
   }
 
+  String _formatPrice(dynamic price) {
+    double numericPrice;
+    if (price is String) {
+      numericPrice =
+          double.tryParse(price.replaceAll(RegExp(r'[^\d.]'), '')) ?? 0.0;
+    } else if (price is num) {
+      numericPrice = price.toDouble();
+    } else {
+      numericPrice = 0.0;
+    }
+
+    final formatter = NumberFormat.currency(
+      locale: 'id_ID',
+      symbol: 'Rp',
+      decimalDigits: 0,
+    );
+    return formatter.format(numericPrice);
+  }
+
   void addItemToCart() {
-    if (_selectedSize == null) {
+    if (_selectedUnit == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please select a size!'),
+          content: Text('Please select a unit/quantity!'),
           backgroundColor: Colors.red,
           duration: Duration(seconds: 1),
         ),
@@ -36,11 +57,12 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     }
 
     final cart = Provider.of<Cart>(context, listen: false);
-    cart.addItemToCart(widget.shoe, _selectedSize!);
+
+    cart.addItemToCart(widget.shoe, _selectedUnit!);
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('${widget.shoe.name} (Size: ${_selectedSize!}) Booking Shoes!'),
+        content: Text('${widget.shoe.name} (${_selectedUnit!}) added to cart!'),
         backgroundColor: Colors.black87,
         duration: const Duration(seconds: 2),
       ),
@@ -51,6 +73,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    final formattedPrice = _formatPrice(widget.shoe.price);
+
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
@@ -62,7 +86,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         ),
         title: Text(
           widget.shoe.name,
-          style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         centerTitle: true,
       ),
@@ -78,10 +105,26 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                     Center(
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(15),
-                        child: Image.asset(
+
+                        child: Image.network(
                           widget.shoe.imagePath,
                           height: 300,
                           fit: BoxFit.cover,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return SizedBox(
+                              height: 300,
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  value:
+                                      loadingProgress.expectedTotalBytes != null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                            loadingProgress.expectedTotalBytes!
+                                      : null,
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ),
@@ -98,7 +141,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                     const SizedBox(height: 10),
 
                     Text(
-                      '\$' + widget.shoe.price,
+                      formattedPrice,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 24,
@@ -109,15 +152,12 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
                     Text(
                       widget.shoe.description,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[700],
-                      ),
+                      style: TextStyle(fontSize: 16, color: Colors.grey[700]),
                     ),
                     const SizedBox(height: 20),
 
                     const Text(
-                      'Select Size:',
+                      'Select Unit:',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
@@ -128,28 +168,38 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                     Wrap(
                       spacing: 10.0,
                       runSpacing: 10.0,
-                      children: widget.shoe.availableSizes.map((size) {
-                        final bool isSelected = _selectedSize == size;
+
+                      children: widget.shoe.availableSizes.map((unit) {
+                        final bool isSelected = _selectedUnit == unit;
                         return GestureDetector(
                           onTap: () {
                             setState(() {
-                              _selectedSize = size;
+                              _selectedUnit = unit;
                             });
                           },
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 15,
+                              vertical: 10,
+                            ),
                             decoration: BoxDecoration(
-                              color: isSelected ? Colors.black : Colors.grey[300],
+                              color: isSelected
+                                  ? Colors.black
+                                  : Colors.grey[300],
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
-                                color: isSelected ? Colors.transparent : Colors.grey.shade400,
+                                color: isSelected
+                                    ? Colors.transparent
+                                    : Colors.grey.shade400,
                               ),
                             ),
                             child: Text(
-                              size,
+                              unit,
                               style: TextStyle(
                                 color: isSelected ? Colors.white : Colors.black,
-                                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                fontWeight: isSelected
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
                               ),
                             ),
                           ),
@@ -176,7 +226,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 ),
               ),
               child: const Text(
-                'Booking Shoes',
+                'Add to Cart',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),

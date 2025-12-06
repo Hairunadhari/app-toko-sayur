@@ -8,6 +8,8 @@ environment:
 
 dependencies:
   supabase_flutter: ^2.0.0
+  get: ^4.7.3
+  intl: ^0.20.1
   flutter:
     sdk: flutter
 
