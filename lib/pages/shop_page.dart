@@ -28,20 +28,19 @@ class _ShopPageState extends State<ShopPage> {
           '${item.name} (${quantityUnit}) Successfully added to Cart',
         ),
         duration: const Duration(seconds: 1),
-        backgroundColor: Colors.black87,
+        backgroundColor: Color(0xFF2E7D32),
         behavior: SnackBarBehavior.floating,
       ),
     );
   }
 
   final List<String> _categories = [
-    'All',
-    'Vegetables',
-    'Fruits',
-    'Spices',
-    'Root Crops',
+    'Semua Produk',
+    'Sayuran',
+    'Buah-buahan',
+    'Umbi-umbian',
   ];
-  String _selectedCategory = 'All';
+  String _selectedCategory = 'Semua Produk';
 
   static const int _flashSaleLimit = 5;
 
@@ -51,24 +50,25 @@ class _ShopPageState extends State<ShopPage> {
 
   final List<Map<String, dynamic>> _bannerData = [
     {
-      'title': 'Limited Time Offer',
-      'subtitle': 'Delivery is 50% cheaper',
-      'color': Colors.black87,
-      'icon': Icons.discount,
+      'title': 'Promo Panen!',
+      'subtitle': 'Diskon hingga 40% untuk buah segar.',
+      'color': Colors.green.shade700,
+      'icon': Icons.apple,
     },
     {
-      'title': 'New Arrivals',
-      'subtitle': 'Explore the latest collection!',
-      'color': Colors.blueGrey[800],
-      'icon': Icons.fiber_new,
+      'title': 'Sayur Segar Hari Ini',
+      'subtitle': 'Stok baru, langsung dari petani!',
+      'color': Colors.lightGreen.shade600,
+      'icon': Icons.eco,
     },
     {
-      'title': 'Member Exclusive',
-      'subtitle': 'Extra 10% off for members!',
-      'color': Colors.grey[800],
-      'icon': Icons.loyalty,
+      'title': 'Paket Hemat Belanja',
+      'subtitle': 'Belanja lebih hemat dengan bundling sayur & buah.',
+      'color': Colors.orange.shade700,
+      'icon': Icons.shopping_basket,
     },
   ];
+
 
   @override
   void initState() {
@@ -132,14 +132,14 @@ class _ShopPageState extends State<ShopPage> {
                             vertical: 8,
                           ),
                           decoration: BoxDecoration(
-                            color: isSelected ? Colors.black : Colors.grey[300],
+                            color: isSelected ? Color(0xFF2E7D32) : Colors.grey[300],
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(color: Colors.grey.shade400),
                           ),
                           child: Text(
                             unit,
                             style: TextStyle(
-                              color: isSelected ? Colors.white : Colors.black,
+                              color: isSelected ? Colors.white : Color(0xFF2E7D32),
                               fontWeight: isSelected
                                   ? FontWeight.bold
                                   : FontWeight.normal,
@@ -168,7 +168,7 @@ class _ShopPageState extends State<ShopPage> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
+                    backgroundColor: Color(0xFF2E7D32),
                   ),
                   child: const Text('Add to Cart'),
                 ),
@@ -275,7 +275,7 @@ class _ShopPageState extends State<ShopPage> {
                                     ),
                                     child: const Icon(
                                       Icons.location_on_outlined,
-                                      color: Colors.black,
+                                      color: Color(0xFF2E7D32),
                                     ),
                                   ),
                                   const SizedBox(width: 10),
@@ -295,7 +295,7 @@ class _ShopPageState extends State<ShopPage> {
                                         style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 18,
-                                          color: Colors.black,
+                                          color: Color(0xFF2E7D32),
                                         ),
                                       ),
                                     ],
@@ -310,7 +310,7 @@ class _ShopPageState extends State<ShopPage> {
                                 ),
                                 child: const Icon(
                                   Icons.notifications_none,
-                                  color: Colors.black,
+                                  color: Color(0xFF2E7D32),
                                 ),
                               ),
                             ],
@@ -325,7 +325,7 @@ class _ShopPageState extends State<ShopPage> {
                             ),
                             child: TextField(
                               decoration: InputDecoration(
-                                hintText: 'Search for Fresh Produce',
+                                hintText: 'Cari buah, sayur, atau produk segar...',
                                 hintStyle: TextStyle(color: Colors.grey[600]),
                                 prefixIcon: Icon(
                                   Icons.search,
@@ -336,7 +336,7 @@ class _ShopPageState extends State<ShopPage> {
                                   vertical: 12.0,
                                 ),
                               ),
-                              style: const TextStyle(color: Colors.black),
+                              style: const TextStyle(color: Color(0xFF2E7D32)),
                             ),
                           ),
                         ],
@@ -428,7 +428,7 @@ class _ShopPageState extends State<ShopPage> {
                                   width: _currentPage == index ? 24.0 : 8.0,
                                   decoration: BoxDecoration(
                                     color: _currentPage == index
-                                        ? Colors.black
+                                        ? Color(0xFF2E7D32)
                                         : Colors.grey[400],
                                     borderRadius: BorderRadius.circular(5),
                                   ),
@@ -455,19 +455,19 @@ class _ShopPageState extends State<ShopPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             const Text(
-                              'Product Categories',
+                              'Kategori Produk',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 24,
-                                color: Colors.black,
+                                color: Color(0xFF2E7D32),
                               ),
                             ),
                             GestureDetector(
                               onTap: () {},
                               child: const Text(
-                                'See All',
+                                'Lihat Semua',
                                 style: TextStyle(
-                                  color: Colors.black54,
+                                  color: Color(0xFF2E7D32),
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -497,7 +497,7 @@ class _ShopPageState extends State<ShopPage> {
                                   margin: const EdgeInsets.only(right: 10),
                                   decoration: BoxDecoration(
                                     color: _selectedCategory == category
-                                        ? Colors.black
+                                        ? Color(0xFF2E7D32)
                                         : Colors.grey[300],
                                     borderRadius: BorderRadius.circular(20),
                                   ),
@@ -532,19 +532,19 @@ class _ShopPageState extends State<ShopPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
-                          'Hot Picks 🔥',
+                          'Favorit Pembeli 🥝',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 24,
-                            color: Colors.black,
+                            color: Color(0xFF2E7D32),
                           ),
                         ),
                         GestureDetector(
                           onTap: () {},
                           child: const Text(
-                            'See All',
+                            'Lihat Semua',
                             style: TextStyle(
-                              color: Colors.black54,
+                              color: Color(0xFF2E7D32),
                               fontWeight: FontWeight.bold,
                             ),
                           ),

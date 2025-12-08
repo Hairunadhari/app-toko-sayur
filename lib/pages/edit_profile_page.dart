@@ -147,7 +147,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             TextField(
               controller: _addressController,
               decoration: InputDecoration(
-                labelText: 'Delivery Address',
+                labelText: 'Pesanan dikirim ke',
                 labelStyle: TextStyle(color: Colors.grey[700]),
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.grey.shade400),

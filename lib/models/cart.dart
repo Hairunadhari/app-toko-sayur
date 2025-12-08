@@ -113,7 +113,7 @@ class Cart extends ChangeNotifier {
   String _userName = 'Alif Minda';
   String _userEmail = 'alifmind@badassatron.com';
   String _userPhone = '+62 812 3456 7890';
-  String _deliveryAddress = '92 High Street, Depok';
+  String _deliveryAddress = 'Jl Margonda, Depok';
   String _userAvatarUrl = 'https://via.placeholder.com/150';
 
   // --- NEW: PAST BOOKINGS ---

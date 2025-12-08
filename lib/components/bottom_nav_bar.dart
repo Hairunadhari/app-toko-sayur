@@ -21,13 +21,13 @@ class MyBottomNavBar extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: isSelected ? Colors.black : Colors.grey[600],
+              color: isSelected ? Color(0xFF2E7D32) : Colors.grey[600],
               size: 26,
             ),
             Text(
               text,
               style: TextStyle(
-                color: isSelected ? Colors.black : Colors.grey[600],
+                color: isSelected ? Color(0xFF2E7D32) : Colors.grey[600],
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                 fontSize: 12,
               ),
@@ -43,11 +43,10 @@ class MyBottomNavBar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          buildNavBarItem(Icons.home, 'Home', 0),
-          buildNavBarItem(Icons.shopping_bag, 'Booking', 1),
-          buildNavBarItem(Icons.grid_view, 'Products  ', 2),
-          buildNavBarItem(Icons.settings, 'Settings', 3),
-          buildNavBarItem(Icons.person, 'Profile', 4),
+          buildNavBarItem(Icons.home, 'Beranda', 0),
+          buildNavBarItem(Icons.shopping_bag, 'Keranjang', 1),
+          buildNavBarItem(Icons.grid_view, 'Produk  ', 2),
+          buildNavBarItem(Icons.person, 'Profile', 3),
         ],
       ),
     );

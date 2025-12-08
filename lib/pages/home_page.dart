@@ -45,7 +45,7 @@ class _HomePageState extends State<HomePage> {
   String _getAppBarTitle() {
     switch (_selectedIndex) {
       case 0:
-        return 'Shop';
+        return 'Toko Buah & Sayur Segar';
       case 1:
         return 'My Cart';
       case 2:
@@ -84,14 +84,14 @@ class _HomePageState extends State<HomePage> {
         title: Text(
           _getAppBarTitle(),
           style: const TextStyle(
-            color: Colors.black,
+            color: Color(0xFF2E7D32),
             fontWeight: FontWeight.bold,
           ),
         ),
         centerTitle: true,
       ),
       drawer: Drawer(
-        backgroundColor: Colors.grey[900],
+         backgroundColor: Color(0xFF2E7D32),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -127,29 +127,6 @@ class _HomePageState extends State<HomePage> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => const MyOrdersPage(),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-
-                Padding(
-                  padding: const EdgeInsets.only(left: 25.0),
-                  child: ListTile(
-                    leading: const Icon(
-                      Icons.favorite_border,
-                      color: Colors.white,
-                    ),
-                    title: const Text(
-                      'My Wishlist',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const WishlistPage(),
                         ),
                       );
                     },

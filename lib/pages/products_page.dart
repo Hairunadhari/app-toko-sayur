@@ -123,7 +123,7 @@ class _ProductsPageState extends State<ProductsPage> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
+                    backgroundColor: Color(0xFF2E7D32),
                   ),
                   child: const Text('Add to Cart'),
                 ),
@@ -136,26 +136,23 @@ class _ProductsPageState extends State<ProductsPage> {
   }
 
   final List<String> _categories = [
-    'All',
-    'Vegetables',
-    'Fruits',
-    'Spices',
-    'Root Crops',
+    'Semua Produk',
+    'Sayuran',
+    'Buah-buahan',
+    'Umbi-umbian',
   ];
   String _selectedCategory = 'All';
 
   String _getCategoryFromId(int categoryId) {
     switch (categoryId) {
       case 9:
-        return 'Vegetables';
+        return 'Sayuran';
       case 10:
-        return 'Fruits';
+        return 'Buah-buahan';
       case 11:
-        return 'Spices';
-      case 12:
-        return 'Root Crops';
+        return 'Umbi-umbian';
       default:
-        return 'All';
+        return 'Semua Produk';
     }
   }
 
