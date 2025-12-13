@@ -157,7 +157,6 @@ class _CartPageState extends State<CartPage> {
   ) {
     String bookingId = 'BKNG-${DateTime.now().millisecondsSinceEpoch % 100000}';
     String bookingDate = DateFormat('dd MMM yyyy').format(DateTime.now());
-    String barcodePath = 'lib/images/Code-128.png';
 
     final cart = Provider.of<Cart>(context, listen: false);
     List<CartItem> bookedItems = List.from(cart.userCart);
@@ -166,7 +165,7 @@ class _CartPageState extends State<CartPage> {
       bookingId: bookingId,
       date: bookingDate,
       totalAmount: totalAmount,
-      barcodeImagePath: barcodePath,
+      barcodeImagePath: '', // No longer needed
       bookedItems: bookedItems,
     );
 
@@ -179,42 +178,122 @@ class _CartPageState extends State<CartPage> {
       barrierDismissible: false,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Order Confirmed!', textAlign: TextAlign.center),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text('Your order is confirmed!'),
-                const SizedBox(height: 20),
-                const Text(
-                  'Please present this barcode at the store for pickup.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Column(
+            children: [
+              Icon(Icons.check_circle, color: Colors.green, size: 80),
+              const SizedBox(height: 16),
+              const Text(
+                'Order Berhasil!',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Pesanan Anda telah berhasil dibuat',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16),
+              ),
+              const SizedBox(height: 20),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                const SizedBox(height: 20),
-                Image.asset(
-                  newBooking.barcodeImagePath,
-                  height: 150,
-                  width: 250,
-                  fit: BoxFit.contain,
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Order ID:',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
+                        ),
+                        Text(
+                          '#${newBooking.bookingId}',
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Tanggal:',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
+                        ),
+                        Text(
+                          newBooking.date,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Total:',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
+                        ),
+                        Text(
+                          _formatPrice(newBooking.totalAmount),
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 20),
-                Text('Order ID: #${newBooking.bookingId}'),
-                Text('Date: ${newBooking.date}'),
-                Text('Total: ${_formatPrice(newBooking.totalAmount)}'),
-              ],
-            ),
+              ),
+            ],
           ),
           actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const MyOrdersPage()),
-                );
-              },
-              child: const Text('OK'),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const MyOrdersPage(),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: const Text(
+                  'Lihat Pesanan',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ),
             ),
           ],
         );

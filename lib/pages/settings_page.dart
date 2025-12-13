@@ -15,21 +15,25 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[300],
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          'Settings',
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(25.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Heading Halaman Pengaturan
-            const Text(
-              'Settings',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 28,
-                color: Colors.black,
-              ),
-            ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
 
             // Opsi Pengaturan Umum
             ListTile(
@@ -42,7 +46,9 @@ class _SettingsPageState extends State<SettingsPage> {
                     _darkModeEnabled = value;
                     // TODO: Implementasi logika untuk mengganti tema aplikasi
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Dark Mode: ${value ? "On" : "Off"}')),
+                      SnackBar(
+                        content: Text('Dark Mode: ${value ? "On" : "Off"}'),
+                      ),
                     );
                   });
                 },
@@ -53,7 +59,11 @@ class _SettingsPageState extends State<SettingsPage> {
                   _darkModeEnabled = !_darkModeEnabled;
                   // TODO: Implementasi logika untuk mengganti tema aplikasi
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Dark Mode: ${_darkModeEnabled ? "On" : "Off"}')),
+                    SnackBar(
+                      content: Text(
+                        'Dark Mode: ${_darkModeEnabled ? "On" : "Off"}',
+                      ),
+                    ),
                   );
                 });
               },
@@ -68,7 +78,11 @@ class _SettingsPageState extends State<SettingsPage> {
                     _notificationsEnabled = value;
                     // TODO: Implementasi logika untuk mengelola notifikasi
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Notifications: ${value ? "Enabled" : "Disabled"}')),
+                      SnackBar(
+                        content: Text(
+                          'Notifications: ${value ? "Enabled" : "Disabled"}',
+                        ),
+                      ),
                     );
                   });
                 },
@@ -77,7 +91,11 @@ class _SettingsPageState extends State<SettingsPage> {
                 setState(() {
                   _notificationsEnabled = !_notificationsEnabled;
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Notifications: ${_notificationsEnabled ? "Enabled" : "Disabled"}')),
+                    SnackBar(
+                      content: Text(
+                        'Notifications: ${_notificationsEnabled ? "Enabled" : "Disabled"}',
+                      ),
+                    ),
                   );
                 });
               },
@@ -89,7 +107,9 @@ class _SettingsPageState extends State<SettingsPage> {
               onTap: () {
                 // TODO: Navigasi ke halaman pemilihan bahasa
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Navigate to Language Settings')),
+                  const SnackBar(
+                    content: Text('Navigate to Language Settings'),
+                  ),
                 );
               },
             ),

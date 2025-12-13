@@ -33,14 +33,23 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
                 Text('Date: ${booking.date}'),
                 Text('Total: \$${booking.totalAmount}'),
                 const SizedBox(height: 20),
-                const Text('Items Booked:', style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text(
+                  'Items Booked:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 10),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: booking.bookedItems.map((item) => Padding(
-                    padding: const EdgeInsets.only(bottom: 4.0),
-                    child: Text('${item.quantity}x ${item.shoe.name} (Size: ${item.selectedSize})'),
-                  )).toList(),
+                  children: booking.bookedItems
+                      .map(
+                        (item) => Padding(
+                          padding: const EdgeInsets.only(bottom: 4.0),
+                          child: Text(
+                            '${item.quantity}x ${item.shoe.name} (Size: ${item.selectedSize})',
+                          ),
+                        ),
+                      )
+                      .toList(),
                 ),
               ],
             ),
@@ -64,43 +73,68 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
 
         return Scaffold(
           backgroundColor: Colors.grey[200],
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+              onPressed: () => Navigator.pop(context),
+            ),
+            title: const Text(
+              'My Orders',
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            centerTitle: true,
+          ),
           body: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 25.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                SizedBox(height: MediaQuery.of(context).padding.top + kToolbarHeight + 10),
-                const Text(
-                  'My Orders',
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.black),
-                ),
                 const SizedBox(height: 20),
                 Expanded(
                   child: bookings.isEmpty
                       ? Center(
-                    child: Text(
-                      'You have no past bookings!',
-                      style: TextStyle(fontSize: 18, color: Colors.grey[600]),
-                    ),
-                  )
+                          child: Text(
+                            'You have no past bookings!',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        )
                       : ListView.builder(
-                    itemCount: bookings.length,
-                    itemBuilder: (context, index) {
-                      final booking = bookings[index];
-                      return Card(
-                        margin: const EdgeInsets.only(bottom: 15),
-                        elevation: 2,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        child: ListTile(
-                          leading: const Icon(Icons.receipt, color: Colors.black),
-                          title: Text('Booking ID: ${booking.bookingId}'),
-                          subtitle: Text('Total: \$${booking.totalAmount} on ${booking.date}'),
-                          trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                          onTap: () => _showBookingDetailsDialog(context, booking),
+                          itemCount: bookings.length,
+                          itemBuilder: (context, index) {
+                            final booking = bookings[index];
+                            return Card(
+                              margin: const EdgeInsets.only(bottom: 15),
+                              elevation: 2,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: ListTile(
+                                leading: const Icon(
+                                  Icons.receipt,
+                                  color: Colors.black,
+                                ),
+                                title: Text('Booking ID: ${booking.bookingId}'),
+                                subtitle: Text(
+                                  'Total: \$${booking.totalAmount} on ${booking.date}',
+                                ),
+                                trailing: const Icon(
+                                  Icons.arrow_forward_ios,
+                                  size: 16,
+                                ),
+                                onTap: () =>
+                                    _showBookingDetailsDialog(context, booking),
+                              ),
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
                 ),
               ],
             ),

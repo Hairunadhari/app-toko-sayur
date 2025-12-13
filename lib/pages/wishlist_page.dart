@@ -13,7 +13,6 @@ class WishlistPage extends StatefulWidget {
 }
 
 class _WishlistPageState extends State<WishlistPage> {
-  
   // Helper function untuk memformat harga ke format Rupiah
   String _formatPrice(dynamic price) {
     double numericPrice;
@@ -53,18 +52,27 @@ class _WishlistPageState extends State<WishlistPage> {
 
         return Scaffold(
           backgroundColor: Colors.grey[200],
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+              onPressed: () => Navigator.pop(context),
+            ),
+            title: const Text(
+              'My Wishlist',
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            centerTitle: true,
+          ),
           body: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 25.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: MediaQuery.of(context).padding.top + kToolbarHeight + 10),
-
-                // Judul "My Wishlist"
-                const Text(
-                  'My Wishlist',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28, color: Colors.black),
-                ),
                 const SizedBox(height: 20),
 
                 Expanded(
@@ -72,7 +80,10 @@ class _WishlistPageState extends State<WishlistPage> {
                       ? Center(
                           child: Text(
                             'Your wishlist is empty!',
-                            style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.grey[600],
+                            ),
                           ),
                         )
                       : ListView.builder(
@@ -100,34 +111,51 @@ class _WishlistPageState extends State<WishlistPage> {
                                   borderRadius: BorderRadius.circular(8),
                                   // MENGUBAH: Menggunakan Image.network untuk URL gambar
                                   child: Image.network(
-                                    item.imagePath, 
-                                    width: 60, 
-                                    height: 60, 
+                                    item.imagePath,
+                                    width: 60,
+                                    height: 60,
                                     fit: BoxFit.cover,
-                                    loadingBuilder: (context, child, loadingProgress) {
-                                      if (loadingProgress == null) return child;
-                                      return Center(
-                                        child: CircularProgressIndicator(
-                                          value: loadingProgress.expectedTotalBytes != null
-                                              ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                                              : null,
-                                        ),
-                                      );
-                                    },
+                                    loadingBuilder:
+                                        (context, child, loadingProgress) {
+                                          if (loadingProgress == null)
+                                            return child;
+                                          return Center(
+                                            child: CircularProgressIndicator(
+                                              value:
+                                                  loadingProgress
+                                                          .expectedTotalBytes !=
+                                                      null
+                                                  ? loadingProgress
+                                                            .cumulativeBytesLoaded /
+                                                        loadingProgress
+                                                            .expectedTotalBytes!
+                                                  : null,
+                                            ),
+                                          );
+                                        },
                                   ),
                                 ),
-                                title: Text(item.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                                title: Text(
+                                  item.name,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                                 // MENGUBAH: Menampilkan harga dalam Rupiah
-                                subtitle: Text(_formatPrice(item.price)), 
+                                subtitle: Text(_formatPrice(item.price)),
                                 trailing: IconButton(
-                                  icon: const Icon(Icons.delete, color: Colors.red),
+                                  icon: const Icon(
+                                    Icons.delete,
+                                    color: Colors.red,
+                                  ),
                                   onPressed: () => removeFromWishlist(item),
                                 ),
                                 onTap: () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => ProductDetailPage(shoe: item),
+                                      builder: (context) =>
+                                          ProductDetailPage(shoe: item),
                                     ),
                                   );
                                 },
