@@ -141,7 +141,20 @@ class _ProductsPageState extends State<ProductsPage> {
     'Buah-buahan',
     'Umbi-umbian',
   ];
-  String _selectedCategory = 'All';
+  String _selectedCategory = 'Semua Produk';
+
+  String _mapCategoryToType(String category) {
+    switch (category) {
+      case 'Sayuran':
+        return 'Sayur';
+      case 'Buah-buahan':
+        return 'Buah';
+      case 'Umbi-umbian':
+        return 'Umbi';
+      default:
+        return '';
+    }
+  }
 
   String _getCategoryFromId(int categoryId) {
     switch (categoryId) {
@@ -184,13 +197,8 @@ class _ProductsPageState extends State<ProductsPage> {
 
       List<Product> rawProducts = productController.products.toList();
 
+      // Products are already filtered by the controller
       List<Shoe> allProducts = rawProducts.map(_mapProductToShoe).toList();
-
-      List<Shoe> filteredShoes = allProducts.where((shoe) {
-        final itemCategory = shoe.gender;
-        return (itemCategory == _selectedCategory) ||
-            (_selectedCategory == 'All');
-      }).toList();
 
       if (allProducts.isEmpty) {
         return const Center(child: Text('No products available.'));
@@ -229,6 +237,13 @@ class _ProductsPageState extends State<ProductsPage> {
                         setState(() {
                           _selectedCategory = category;
                         });
+                        // Fetch products based on selected category
+                        if (category == 'Semua Produk') {
+                          productController.fetchProducts();
+                        } else {
+                          String type = _mapCategoryToType(category);
+                          productController.fetchProductsByType(type);
+                        }
                       },
                       child: Container(
                         alignment: Alignment.center,
@@ -270,11 +285,11 @@ class _ProductsPageState extends State<ProductsPage> {
 
                     mainAxisExtent: 350.0,
                   ),
-                  itemCount: filteredShoes.length,
+                  itemCount: allProducts.length,
                   shrinkWrap: true,
                   physics: const AlwaysScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
-                    Shoe shoe = filteredShoes[index];
+                    Shoe shoe = allProducts[index];
                     return ProductGridTile(
                       shoe: shoe,
                       onAddTap: () => _showUnitSelectionDialog(shoe),

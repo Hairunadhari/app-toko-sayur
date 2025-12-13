@@ -42,6 +42,19 @@ class _ShopPageState extends State<ShopPage> {
   ];
   String _selectedCategory = 'Semua Produk';
 
+  String _mapCategoryToType(String category) {
+    switch (category) {
+      case 'Sayuran':
+        return 'Sayur';
+      case 'Buah-buahan':
+        return 'Buah';
+      case 'Umbi-umbian':
+        return 'Umbi';
+      default:
+        return '';
+    }
+  }
+
   static const int _flashSaleLimit = 5;
 
   final PageController _pageController = PageController();
@@ -68,7 +81,6 @@ class _ShopPageState extends State<ShopPage> {
       'icon': Icons.shopping_basket,
     },
   ];
-
 
   @override
   void initState() {
@@ -132,14 +144,18 @@ class _ShopPageState extends State<ShopPage> {
                             vertical: 8,
                           ),
                           decoration: BoxDecoration(
-                            color: isSelected ? Color(0xFF2E7D32) : Colors.grey[300],
+                            color: isSelected
+                                ? Color(0xFF2E7D32)
+                                : Colors.grey[300],
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(color: Colors.grey.shade400),
                           ),
                           child: Text(
                             unit,
                             style: TextStyle(
-                              color: isSelected ? Colors.white : Color(0xFF2E7D32),
+                              color: isSelected
+                                  ? Colors.white
+                                  : Color(0xFF2E7D32),
                               fontWeight: isSelected
                                   ? FontWeight.bold
                                   : FontWeight.normal,
@@ -224,18 +240,8 @@ class _ShopPageState extends State<ShopPage> {
             return const Center(child: Text('No products available.'));
           }
 
-          List<Product> filteredProducts = allProducts.where((product) {
-            final String productCategory = _getCategoryFromId(
-              product.categoryId,
-            );
-            if (_selectedCategory == 'All') {
-              return true;
-            }
-
-            return productCategory == _selectedCategory;
-          }).toList();
-
-          List<Product> flashSaleRawProducts = filteredProducts
+          // Products are already filtered by the controller
+          List<Product> flashSaleRawProducts = allProducts
               .take(_flashSaleLimit)
               .toList();
 
@@ -325,7 +331,8 @@ class _ShopPageState extends State<ShopPage> {
                             ),
                             child: TextField(
                               decoration: InputDecoration(
-                                hintText: 'Cari buah, sayur, atau produk segar...',
+                                hintText:
+                                    'Cari buah, sayur, atau produk segar...',
                                 hintStyle: TextStyle(color: Colors.grey[600]),
                                 prefixIcon: Icon(
                                   Icons.search,
@@ -487,6 +494,13 @@ class _ShopPageState extends State<ShopPage> {
                                   setState(() {
                                     _selectedCategory = category;
                                   });
+                                  // Fetch products based on selected category
+                                  if (category == 'Semua Produk') {
+                                    productController.fetchProducts();
+                                  } else {
+                                    String type = _mapCategoryToType(category);
+                                    productController.fetchProductsByType(type);
+                                  }
                                 },
                                 child: Container(
                                   alignment: Alignment.center,
