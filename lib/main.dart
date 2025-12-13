@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:shoenew/models/cart.dart';
 import 'package:shoenew/pages/intro_page.dart';
 import 'package:shoenew/pages/home_page.dart';
+import 'package:shoenew/pages/splash_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
@@ -28,10 +29,10 @@ class MyApp extends StatelessWidget {
       create: (context) => Cart(),
       child: GetMaterialApp(
         debugShowCheckedModeBanner: false,
-        home: const IntroPage(),
+        home: const SplashPage(), // Changed to SplashPage
         getPages: [
           GetPage(name: '/home', page: () => const HomePage()),
-          GetPage(name: '/login', page: () => const IntroPage()),
+          GetPage(name: '/intro', page: () => const IntroPage()),
         ],
       ),
     );

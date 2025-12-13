@@ -170,8 +170,6 @@ class _CartPageState extends State<CartPage> {
     );
 
     cart.addBooking(newBooking);
-    cart.userCart.clear();
-    cart.notifyListeners();
 
     showDialog(
       context: context,

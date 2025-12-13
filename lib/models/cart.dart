@@ -2,15 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:shoenew/models/shoe.dart';
 import 'package:shoenew/models/cart_item.dart';
 import 'package:shoenew/models/booking_detail.dart';
+import 'package:shoenew/services/local_storage_service.dart';
 
 class Cart extends ChangeNotifier {
+  final LocalStorageService _storageService = LocalStorageService();
+  String? _currentUserId;
   // list of shoes for sale
   final List<Shoe> _shoeShop = [
     Shoe(
       name: 'Nike Air Jordan 11',
       price: '250',
       imagePath: 'lib/images/AirDunk.png',
-      description: 'Step into greatness. The Air Jordan 11 delivers a premium look and unmatched comfort, built for legends on off the court.',
+      description:
+          'Step into greatness. The Air Jordan 11 delivers a premium look and unmatched comfort, built for legends on off the court.',
       gender: 'Men',
       availableSizes: ['US 7', 'US 8', 'US 9', 'US 10', 'US 11'],
     ),
@@ -18,7 +22,8 @@ class Cart extends ChangeNotifier {
       name: 'Nike Air Jordan 37',
       price: '240',
       imagePath: 'lib/images/AirJordan37.png',
-      description: 'The future of flight meets iconic heritage. The Air Jordan 37 blends cutting-edge performance tech with design cues from the legendary AJ7. Experience innovation.',
+      description:
+          'The future of flight meets iconic heritage. The Air Jordan 37 blends cutting-edge performance tech with design cues from the legendary AJ7. Experience innovation.',
       gender: 'Women',
       availableSizes: ['US 5', 'US 6', 'US 7', 'US 8', 'US 9'],
     ),
@@ -26,7 +31,8 @@ class Cart extends ChangeNotifier {
       name: 'Nike Air Force 1',
       price: '180',
       imagePath: 'lib/images/AirForce.png',
-      description: 'Elevate your everyday. The Air Force 1 offers legendary comfort and unmatched versatility, taking you from casual to street-chic with ease.',
+      description:
+          'Elevate your everyday. The Air Force 1 offers legendary comfort and unmatched versatility, taking you from casual to street-chic with ease.',
       gender: 'Unisex',
       availableSizes: ['US 6', 'US 7', 'US 8', 'US 9', 'US 10', 'US 11'],
     ),
@@ -34,7 +40,8 @@ class Cart extends ChangeNotifier {
       name: 'Nike Dunk Low',
       price: '170',
       imagePath: 'lib/images/DunkLow.png',
-      description: 'Effortless cool, perfected. The Nike Dunk Low offers classic color-blocking and comfortable wear, ready for any outfit, any day.',
+      description:
+          'Effortless cool, perfected. The Nike Dunk Low offers classic color-blocking and comfortable wear, ready for any outfit, any day.',
       gender: 'Men',
       availableSizes: ['US 7', 'US 8', 'US 9', 'US 10'],
     ),
@@ -42,7 +49,8 @@ class Cart extends ChangeNotifier {
       name: 'Nike Court Low',
       price: '150',
       imagePath: 'lib/images/NikeCourtL.png',
-      description: 'Your new go-to. The Nike Court Low offers a sleek, low-profile design and easy-wearing comfort for effortless style, every day.',
+      description:
+          'Your new go-to. The Nike Court Low offers a sleek, low-profile design and easy-wearing comfort for effortless style, every day.',
       gender: 'Woman',
       availableSizes: ['US 5', 'US 6', 'US 7'],
     ),
@@ -50,7 +58,8 @@ class Cart extends ChangeNotifier {
       name: 'Nike Court Women',
       price: '135',
       imagePath: 'lib/images/NikeCourtW.png',
-      description: 'Step into heritage style designed for her. Nike Court Women`s shoes deliver plush comfort and timeless court-inspired designs, perfect for a chic yet relaxed vibe.',
+      description:
+          'Step into heritage style designed for her. Nike Court Women`s shoes deliver plush comfort and timeless court-inspired designs, perfect for a chic yet relaxed vibe.',
       gender: 'Women',
       availableSizes: ['US 5', 'US 6', 'US 7', 'US 8'],
     ),
@@ -58,7 +67,8 @@ class Cart extends ChangeNotifier {
       name: 'Nike Dunk',
       price: '180',
       imagePath: 'lib/images/NikeDunk.png',
-      description: 'The iconic Nike Dunk. Born on the court, perfected on the streets. A timeless silhouette with unmatched hype. Don`t just wear a shoe, wear a legend.',
+      description:
+          'The iconic Nike Dunk. Born on the court, perfected on the streets. A timeless silhouette with unmatched hype. Don`t just wear a shoe, wear a legend.',
       gender: 'Women',
       availableSizes: ['US 6', 'US 7', 'US 8', 'US 9'],
     ),
@@ -66,7 +76,8 @@ class Cart extends ChangeNotifier {
       name: 'Nike Dunk High',
       price: '250',
       imagePath: 'lib/images/NikeDunkHigh.png',
-      description: 'Step up your game. With its padded high-top collar, the Nike Dunk High offers a secure feel and undeniable retro cool, blending court comfort with street-ready flair.',
+      description:
+          'Step up your game. With its padded high-top collar, the Nike Dunk High offers a secure feel and undeniable retro cool, blending court comfort with street-ready flair.',
       gender: 'Men',
       availableSizes: ['US 8', 'US 9', 'US 10', 'US 11'],
     ),
@@ -150,7 +161,13 @@ class Cart extends ChangeNotifier {
   // --- AKHIR WISHLIST ---
 
   // --- METODE PROFIL ---
-  void updateProfile({String? name, String? email, String? phone, String? address, String? avatarUrl}) {
+  void updateProfile({
+    String? name,
+    String? email,
+    String? phone,
+    String? address,
+    String? avatarUrl,
+  }) {
     if (name != null) _userName = name;
     if (email != null) _userEmail = email;
     if (phone != null) _userPhone = phone;
@@ -159,6 +176,45 @@ class Cart extends ChangeNotifier {
     notifyListeners();
   }
   // --- AKHIR PROFIL ---
+
+  // --- METODE INISIALISASI USER ---
+  Future<void> initializeUser(String userId) async {
+    _currentUserId = userId;
+
+    // Load cart from storage
+    _userCart = await _storageService.loadCart(userId);
+
+    // Load orders from storage
+    _pastBookings = await _storageService.loadOrders(userId);
+
+    notifyListeners();
+  }
+
+  // Clear user data on logout
+  Future<void> clearUserData() async {
+    if (_currentUserId != null) {
+      await _storageService.clearUserData(_currentUserId!);
+    }
+    _currentUserId = null;
+    _userCart = [];
+    _pastBookings = [];
+    notifyListeners();
+  }
+
+  // Save cart to storage
+  Future<void> _saveCartToStorage() async {
+    if (_currentUserId != null) {
+      await _storageService.saveCart(_currentUserId!, _userCart);
+    }
+  }
+
+  // Save orders to storage
+  Future<void> _saveOrdersToStorage() async {
+    if (_currentUserId != null) {
+      await _storageService.saveOrders(_currentUserId!, _pastBookings);
+    }
+  }
+  // --- AKHIR INISIALISASI USER ---
 
   // --- METODE KERANJANG UTAMA ---
   void addItemToCart(Shoe shoe, String selectedSize) {
@@ -171,18 +227,27 @@ class Cart extends ChangeNotifier {
       }
     }
     if (!found) {
-      _userCart.add(CartItem(shoe: shoe, quantity: 1, selectedSize: selectedSize));
+      _userCart.add(
+        CartItem(shoe: shoe, quantity: 1, selectedSize: selectedSize),
+      );
     }
+    _saveCartToStorage();
     notifyListeners();
   }
 
   void removeItemFromCart(CartItem cartItem) {
-    _userCart.removeWhere((item) => item.shoe == cartItem.shoe && item.selectedSize == cartItem.selectedSize);
+    _userCart.removeWhere(
+      (item) =>
+          item.shoe == cartItem.shoe &&
+          item.selectedSize == cartItem.selectedSize,
+    );
+    _saveCartToStorage();
     notifyListeners();
   }
 
   void incrementQuantity(CartItem cartItem) {
     cartItem.quantity++;
+    _saveCartToStorage();
     notifyListeners();
   }
 
@@ -192,6 +257,7 @@ class Cart extends ChangeNotifier {
     } else {
       _userCart.remove(cartItem);
     }
+    _saveCartToStorage();
     notifyListeners();
   }
 
@@ -212,6 +278,7 @@ class Cart extends ChangeNotifier {
     } else {
       oldItem.selectedSize = newSize;
     }
+    _saveCartToStorage();
     notifyListeners();
   }
   // --- AKHIR METODE KERANJANG UTAMA ---
@@ -219,6 +286,12 @@ class Cart extends ChangeNotifier {
   // --- METODE BOOKING ---
   void addBooking(BookingDetail booking) {
     _pastBookings.add(booking);
+    _saveOrdersToStorage();
+
+    // Clear cart after successful booking
+    _userCart.clear();
+    _saveCartToStorage();
+
     notifyListeners();
   }
 
@@ -229,5 +302,6 @@ class Cart extends ChangeNotifier {
     }
     return total.toStringAsFixed(2);
   }
-// --- AKHIR METHOD BOOKING ---
+
+  // --- AKHIR METHOD BOOKING ---
 }

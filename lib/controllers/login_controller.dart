@@ -1,7 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shoenew/models/cart.dart';
 import 'package:shoenew/services/auth_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:provider/provider.dart';
 
 class LoginController extends GetxController {
   final AuthService authService = AuthService();
@@ -40,8 +45,17 @@ class LoginController extends GetxController {
           password: passwordController.text.trim(),
         );
 
-        // Check if login was successful
         if (res.user != null) {
+          // Get user ID from response
+          final userId = res.user!.id;
+
+          // Initialize cart with user ID for local storage
+          final context = Get.context;
+          if (context != null) {
+            final cart = Provider.of<Cart>(context, listen: false);
+            await cart.initializeUser(userId);
+          }
+
           // Show success toast
           Get.snackbar(
             'Login Berhasil',
