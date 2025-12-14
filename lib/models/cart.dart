@@ -6,105 +6,13 @@ import 'package:shoenew/services/local_storage_service.dart';
 
 class Cart extends ChangeNotifier {
   final LocalStorageService _storageService = LocalStorageService();
-  String? _currentUserId;
-  // list of shoes for sale
+  
+  // 1. Pastikan ID pengguna dapat null sebelum login
+  String? _currentUserId; 
+  
+  // list of shoes for sale (Data statis ini sudah bagus)
   final List<Shoe> _shoeShop = [
-    Shoe(
-      name: 'Nike Air Jordan 11',
-      price: '250',
-      imagePath: 'lib/images/AirDunk.png',
-      description:
-          'Step into greatness. The Air Jordan 11 delivers a premium look and unmatched comfort, built for legends on off the court.',
-      gender: 'Men',
-      availableSizes: ['US 7', 'US 8', 'US 9', 'US 10', 'US 11'],
-    ),
-    Shoe(
-      name: 'Nike Air Jordan 37',
-      price: '240',
-      imagePath: 'lib/images/AirJordan37.png',
-      description:
-          'The future of flight meets iconic heritage. The Air Jordan 37 blends cutting-edge performance tech with design cues from the legendary AJ7. Experience innovation.',
-      gender: 'Women',
-      availableSizes: ['US 5', 'US 6', 'US 7', 'US 8', 'US 9'],
-    ),
-    Shoe(
-      name: 'Nike Air Force 1',
-      price: '180',
-      imagePath: 'lib/images/AirForce.png',
-      description:
-          'Elevate your everyday. The Air Force 1 offers legendary comfort and unmatched versatility, taking you from casual to street-chic with ease.',
-      gender: 'Unisex',
-      availableSizes: ['US 6', 'US 7', 'US 8', 'US 9', 'US 10', 'US 11'],
-    ),
-    Shoe(
-      name: 'Nike Dunk Low',
-      price: '170',
-      imagePath: 'lib/images/DunkLow.png',
-      description:
-          'Effortless cool, perfected. The Nike Dunk Low offers classic color-blocking and comfortable wear, ready for any outfit, any day.',
-      gender: 'Men',
-      availableSizes: ['US 7', 'US 8', 'US 9', 'US 10'],
-    ),
-    Shoe(
-      name: 'Nike Court Low',
-      price: '150',
-      imagePath: 'lib/images/NikeCourtL.png',
-      description:
-          'Your new go-to. The Nike Court Low offers a sleek, low-profile design and easy-wearing comfort for effortless style, every day.',
-      gender: 'Woman',
-      availableSizes: ['US 5', 'US 6', 'US 7'],
-    ),
-    Shoe(
-      name: 'Nike Court Women',
-      price: '135',
-      imagePath: 'lib/images/NikeCourtW.png',
-      description:
-          'Step into heritage style designed for her. Nike Court Women`s shoes deliver plush comfort and timeless court-inspired designs, perfect for a chic yet relaxed vibe.',
-      gender: 'Women',
-      availableSizes: ['US 5', 'US 6', 'US 7', 'US 8'],
-    ),
-    Shoe(
-      name: 'Nike Dunk',
-      price: '180',
-      imagePath: 'lib/images/NikeDunk.png',
-      description:
-          'The iconic Nike Dunk. Born on the court, perfected on the streets. A timeless silhouette with unmatched hype. Don`t just wear a shoe, wear a legend.',
-      gender: 'Women',
-      availableSizes: ['US 6', 'US 7', 'US 8', 'US 9'],
-    ),
-    Shoe(
-      name: 'Nike Dunk High',
-      price: '250',
-      imagePath: 'lib/images/NikeDunkHigh.png',
-      description:
-          'Step up your game. With its padded high-top collar, the Nike Dunk High offers a secure feel and undeniable retro cool, blending court comfort with street-ready flair.',
-      gender: 'Men',
-      availableSizes: ['US 8', 'US 9', 'US 10', 'US 11'],
-    ),
-    Shoe(
-      name: 'Nike Kids - Black',
-      price: '125',
-      imagePath: 'lib/images/NikeKids-black.png',
-      description: 'Vintage Look',
-      gender: 'Kids',
-      availableSizes: ['K 1', 'K 2', 'K 3'],
-    ),
-    Shoe(
-      name: 'Nike Kids - Blue',
-      price: '135',
-      imagePath: 'lib/images/NikeKids-blue.png',
-      description: 'Vintage Look',
-      gender: 'Kids',
-      availableSizes: ['K 1', 'K 2', 'K 3'],
-    ),
-    Shoe(
-      name: 'Nike Kids - White',
-      price: '120',
-      imagePath: 'lib/images/NikeKids-white.png',
-      description: 'Vintage Look',
-      gender: 'Kids',
-      availableSizes: ['K 1', 'K 2', 'K 3'],
-    ),
+    
     Shoe(
       name: 'Nike Run',
       price: '130',
@@ -120,12 +28,13 @@ class Cart extends ChangeNotifier {
   // --- WISHLIST RELATED PROPERTIES & METHODS ---
   List<Shoe> _wishlist = [];
 
-  // --- DATA PROFIL DAN ALAMAT PENGIRIMAN ---
-  String _userName = 'Alif Minda';
-  String _userEmail = 'alifmind@badassatron.com';
-  String _userPhone = '+62 812 3456 7890';
-  String _deliveryAddress = 'Jl Margonda, Depok';
-  String _userAvatarUrl = 'https://via.placeholder.com/150';
+  // 2. Hapus nilai dummy (Alif Minda, dll.) agar data yang ditampilkan
+  // di profile page benar-benar berasal dari hasil fetch atau string kosong/null
+  String _userName = ''; 
+  String _userEmail = '';
+  String _userPhone = '';
+  String _deliveryAddress = '';
+  String _userAvatarUrl = ''; // Supaya placeholder di ProfilePage muncul jika kosong
 
   // --- NEW: PAST BOOKINGS ---
   List<BookingDetail> _pastBookings = [];
@@ -141,8 +50,9 @@ class Cart extends ChangeNotifier {
   String get userPhone => _userPhone;
   String get deliveryAddress => _deliveryAddress;
   String get userAvatarUrl => _userAvatarUrl;
+  String? get currentUserId => _currentUserId; // Tambahkan getter untuk ID
 
-  // --- METODE WISHLIST ---
+  // --- METODE WISHLIST (Tidak ada perubahan, sudah benar) ---
   void addToWishlist(Shoe shoe) {
     if (!_wishlist.contains(shoe)) {
       _wishlist.add(shoe);
@@ -160,7 +70,7 @@ class Cart extends ChangeNotifier {
   }
   // --- AKHIR WISHLIST ---
 
-  // --- METODE PROFIL ---
+  // --- METODE PROFIL (Sudah bagus dan aman) ---
   void updateProfile({
     String? name,
     String? email,
@@ -175,6 +85,15 @@ class Cart extends ChangeNotifier {
     if (avatarUrl != null) _userAvatarUrl = avatarUrl;
     notifyListeners();
   }
+
+  // 3. Tambahkan metode untuk mereset profil (berguna saat logout/clearUserData)
+  void _resetProfile() {
+    _userName = '';
+    _userEmail = '';
+    _userPhone = '';
+    _deliveryAddress = '';
+    _userAvatarUrl = '';
+  }
   // --- AKHIR PROFIL ---
 
   // --- METODE INISIALISASI USER ---
@@ -187,22 +106,33 @@ class Cart extends ChangeNotifier {
     // Load orders from storage
     _pastBookings = await _storageService.loadOrders(userId);
 
+    // CATATAN: Data Profil tidak dimuat di sini,
+    // Melainkan di LoginController dan ProfilePage via AuthService.
+    // Ini adalah pola yang tepat untuk memisahkan data Auth/Profile dari Cart logic.
+
     notifyListeners();
   }
 
   // Clear user data on logout
   Future<void> clearUserData() async {
     if (_currentUserId != null) {
+      // 4. Clear data lokal pengguna yang tersimpan (keranjang & pesanan)
       await _storageService.clearUserData(_currentUserId!);
     }
+    
+    // Reset semua state lokal
     _currentUserId = null;
     _userCart = [];
     _pastBookings = [];
+    _wishlist = []; // Reset wishlist juga
+    _resetProfile(); // Reset data profil
+
     notifyListeners();
   }
 
   // Save cart to storage
   Future<void> _saveCartToStorage() async {
+    // 5. Penanganan jika _currentUserId null (belum login)
     if (_currentUserId != null) {
       await _storageService.saveCart(_currentUserId!, _userCart);
     }
@@ -210,13 +140,14 @@ class Cart extends ChangeNotifier {
 
   // Save orders to storage
   Future<void> _saveOrdersToStorage() async {
+    // 5. Penanganan jika _currentUserId null (belum login)
     if (_currentUserId != null) {
       await _storageService.saveOrders(_currentUserId!, _pastBookings);
     }
   }
   // --- AKHIR INISIALISASI USER ---
 
-  // --- METODE KERANJANG UTAMA ---
+  // --- METODE KERANJANG UTAMA (Sudah benar) ---
   void addItemToCart(Shoe shoe, String selectedSize) {
     bool found = false;
     for (var item in _userCart) {
@@ -283,7 +214,7 @@ class Cart extends ChangeNotifier {
   }
   // --- AKHIR METODE KERANJANG UTAMA ---
 
-  // --- METODE BOOKING ---
+  // --- METODE BOOKING (Sudah benar) ---
   void addBooking(BookingDetail booking) {
     _pastBookings.add(booking);
     _saveOrdersToStorage();
@@ -298,7 +229,8 @@ class Cart extends ChangeNotifier {
   String calculateTotal() {
     double total = 0;
     for (var item in _userCart) {
-      total += double.parse(item.shoe.price) * item.quantity;
+      // Pastikan harga adalah string yang valid
+      total += double.tryParse(item.shoe.price) ?? 0 * item.quantity;
     }
     return total.toStringAsFixed(2);
   }

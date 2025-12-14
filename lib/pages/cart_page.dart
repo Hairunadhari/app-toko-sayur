@@ -41,10 +41,10 @@ class _CartPageState extends State<CartPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          '${cartItem.shoe.name} (${cartItem.selectedSize}) removed from Cart.',
+          '${cartItem.shoe.name} (${cartItem.selectedSize}) dihapus dari keranjang.',
         ),
         duration: const Duration(seconds: 1),
-        backgroundColor: Colors.black87,
+        backgroundColor: Colors.green,
       ),
     );
   }
@@ -272,12 +272,7 @@ class _CartPageState extends State<CartPage> {
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const MyOrdersPage(),
-                    ),
-                  );
+                  
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
@@ -288,7 +283,7 @@ class _CartPageState extends State<CartPage> {
                   ),
                 ),
                 child: const Text(
-                  'Lihat Pesanan',
+                  'Selesai',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
@@ -318,12 +313,32 @@ class _CartPageState extends State<CartPage> {
                 Expanded(
                   child: cart.userCart.isEmpty
                       ? Center(
-                          child: Text(
-                            'Your Cart is empty!',
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.grey[600],
-                            ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.shopping_cart,
+                                size: 80,
+                                color: Colors.grey[400],
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                'Keranjangmu Kosong',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Keranjang Anda kosong. Tambahkan barang terlebih dahulu!',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[500],
+                                ),
+                              ),
+                            ],
                           ),
                         )
                       : ListView.builder(
@@ -520,7 +535,7 @@ class _CartPageState extends State<CartPage> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text(
-                                  'Your Cart is empty. Add items first!',
+                                  'Keranjang Anda kosong. Tambahkan barang terlebih dahulu!',
                                 ),
                                 backgroundColor: Colors.red,
                               ),

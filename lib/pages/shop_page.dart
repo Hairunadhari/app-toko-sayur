@@ -19,16 +19,17 @@ class ShopPage extends StatefulWidget {
 class _ShopPageState extends State<ShopPage> {
   final ProductController productController = Get.put(ProductController());
 
+  // --- Fungsi ini sekarang dipanggil langsung oleh ShoeTile ---
   void addItemToCart(Shoe item, String quantityUnit) {
     Provider.of<Cart>(context, listen: false).addItemToCart(item, quantityUnit);
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          '${item.name} (${quantityUnit}) Successfully added to Cart',
+          '${item.name} (${quantityUnit}) Berhasil dimasukkan ke keranjang',
         ),
         duration: const Duration(seconds: 1),
-        backgroundColor: Color(0xFF2E7D32),
+        backgroundColor: const Color(0xFF2E7D32),
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -40,7 +41,8 @@ class _ShopPageState extends State<ShopPage> {
     'Buah-buahan',
     'Umbi-umbian',
   ];
-  String _selectedCategory = 'Semua Produk';
+  // Perbaiki typo: 'Semaaua Produk' -> 'Semua Produk'
+  String _selectedCategory = 'Semua Produk'; 
 
   String _mapCategoryToType(String category) {
     switch (category) {
@@ -61,26 +63,33 @@ class _ShopPageState extends State<ShopPage> {
   int _currentPage = 0;
   Timer? _timer;
 
-  final List<Map<String, dynamic>> _bannerData = [
-    {
-      'title': 'Promo Panen!',
-      'subtitle': 'Diskon hingga 40% untuk buah segar.',
-      'color': Colors.green.shade700,
-      'icon': Icons.apple,
-    },
-    {
-      'title': 'Sayur Segar Hari Ini',
-      'subtitle': 'Stok baru, langsung dari petani!',
-      'color': Colors.lightGreen.shade600,
-      'icon': Icons.eco,
-    },
-    {
-      'title': 'Paket Hemat Belanja',
-      'subtitle': 'Belanja lebih hemat dengan bundling sayur & buah.',
-      'color': Colors.orange.shade700,
-      'icon': Icons.shopping_basket,
-    },
-  ];
+
+final List<Map<String, dynamic>> _bannerData = [
+  {
+    'title': 'Promo Panen!',
+    'subtitle': 'Diskon hingga 40% untuk buah segar.',
+    // Menggunakan Kuning Keemasan untuk kesan manis
+    'color': Colors.black, 
+    'icon': Icons.apple,
+    'imageUrl': 'lib/images/banner1.jpeg', 
+  },
+  {
+    'title': 'Sayur Segar Hari Ini',
+    'subtitle': 'Stok baru, langsung dari petani!',
+    // Menggunakan Hijau Kebiruan yang terlihat sejuk
+    'color': Colors.black, 
+    'icon': Icons.eco,
+    'imageUrl': 'lib/images/banner2.jpg', 
+  },
+  {
+    'title': 'Paket Hemat Belanja',
+    'subtitle': 'Belanja lebih hemat dengan bundling sayur & buah.',
+    // Menggunakan Coklat Tanah untuk kesan "earthy"
+    'color': Colors.black, 
+    'icon': Icons.shopping_basket,
+    'imageUrl': 'lib/images/banner3.jpg', 
+  },
+];
 
   @override
   void initState() {
@@ -110,91 +119,7 @@ class _ShopPageState extends State<ShopPage> {
     super.dispose();
   }
 
-  void _showUnitSelectionDialog(Shoe item) {
-    const List<String> availableUnits = ['1 Kg', '500 g', '1 Pc'];
-    String? tempSelectedUnit = availableUnits.first;
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setStateInDialog) {
-            return AlertDialog(
-              title: Text('Select Unit for ${item.name}'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Available Units:'),
-                  const SizedBox(height: 10),
-                  Wrap(
-                    spacing: 8.0,
-                    runSpacing: 8.0,
-                    children: availableUnits.map((unit) {
-                      final bool isSelected = tempSelectedUnit == unit;
-                      return GestureDetector(
-                        onTap: () {
-                          setStateInDialog(() {
-                            tempSelectedUnit = unit;
-                          });
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? Color(0xFF2E7D32)
-                                : Colors.grey[300],
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: Colors.grey.shade400),
-                          ),
-                          child: Text(
-                            unit,
-                            style: TextStyle(
-                              color: isSelected
-                                  ? Colors.white
-                                  : Color(0xFF2E7D32),
-                              fontWeight: isSelected
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
-                            ),
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancel'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    if (tempSelectedUnit != null) {
-                      addItemToCart(item, tempSelectedUnit!);
-                      Navigator.pop(context);
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Please select a unit!')),
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF2E7D32),
-                  ),
-                  child: const Text('Add to Cart'),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
+  // --- FUNGSI _showUnitSelectionDialog DIHAPUS ---
 
   Shoe _mapProductToItem(Product product) {
     return Shoe(
@@ -204,7 +129,9 @@ class _ShopPageState extends State<ShopPage> {
 
       gender: _getCategoryFromId(product.categoryId),
 
-      availableSizes: const ['1 Kg', '500 g', '1 Pc'],
+      // Satuan unit di Shoe seharusnya tidak diperlukan jika hanya ada satu default
+      // Tapi karena struktur data Shoe mengharuskannya, kita biarkan saja.
+      availableSizes: const ['1 Kg', '500 g', '1 Pc'], 
       description: product.description,
     );
   }
@@ -301,7 +228,7 @@ class _ShopPageState extends State<ShopPage> {
                                         style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 18,
-                                          color: Color(0xFF2E7D32),
+                                          color: Colors.grey,
                                         ),
                                       ),
                                     ],
@@ -370,53 +297,58 @@ class _ShopPageState extends State<ShopPage> {
                                 _currentPage = page;
                               });
                             },
+                            // ... di dalam Widget build() -> PageView.builder -> itemBuilder
+
                             itemBuilder: (context, index) {
                               final banner = _bannerData[index];
+                              
                               return Container(
                                 padding: const EdgeInsets.all(20),
                                 decoration: BoxDecoration(
-                                  color: banner['color'] as Color,
                                   borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          banner['title'] as String,
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 18,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 5),
-                                        Text(
-                                          banner['subtitle'] as String,
-                                          style: TextStyle(
-                                            color: Colors.white.withOpacity(
-                                              0.8,
-                                            ),
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                      ],
+                                  
+                                  image: DecorationImage(
+                                    image: AssetImage(banner['imageUrl']),
+                                    fit: BoxFit.cover, 
+                                    
+                                    // Gunakan ColorFilter mode 'darken' dengan Black transparan
+                                    colorFilter: ColorFilter.mode(
+                                      // Hitam dengan opasitas 0.6 (sedikit gelap)
+                                      Colors.black.withOpacity(0.6), 
+                                      BlendMode.darken, // Mencerahkan gambar untuk efek gelap transparan
                                     ),
-                                    Icon(
-                                      banner['icon'] as IconData,
-                                      color: Colors.white,
-                                      size: 40,
+                                  ),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      banner['title'],
+                                      style: const TextStyle(
+                                        // Teks Putih agar kontras
+                                        color: Colors.white, 
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 5),
+                                    Text(
+                                      banner['subtitle'],
+                                      style: TextStyle(
+                                        // Teks Putih transparan
+                                        color: Colors.white.withOpacity(0.9),
+                                        fontSize: 14,
+                                      ),
                                     ),
                                   ],
                                 ),
                               );
                             },
+// ...
                           ),
-
+                          
+                          // ... (Dot indicators tetap sama)
                           Positioned(
                             bottom: 10,
                             left: 0,
@@ -435,7 +367,7 @@ class _ShopPageState extends State<ShopPage> {
                                   width: _currentPage == index ? 24.0 : 8.0,
                                   decoration: BoxDecoration(
                                     color: _currentPage == index
-                                        ? Color(0xFF2E7D32)
+                                        ? const Color(0xFF2E7D32)
                                         : Colors.grey[400],
                                     borderRadius: BorderRadius.circular(5),
                                   ),
@@ -448,7 +380,6 @@ class _ShopPageState extends State<ShopPage> {
                     ),
                   ),
                 ),
-
                 SliverPadding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 25.0,
@@ -511,7 +442,7 @@ class _ShopPageState extends State<ShopPage> {
                                   margin: const EdgeInsets.only(right: 10),
                                   decoration: BoxDecoration(
                                     color: _selectedCategory == category
-                                        ? Color(0xFF2E7D32)
+                                        ? const Color(0xFF2E7D32)
                                         : Colors.grey[300],
                                     borderRadius: BorderRadius.circular(20),
                                   ),
@@ -567,7 +498,7 @@ class _ShopPageState extends State<ShopPage> {
                     ),
                   ),
                 ),
-                SliverToBoxAdapter(child: const SizedBox(height: 20)),
+                const SliverToBoxAdapter(child: SizedBox(height: 20)),
 
                 SliverPadding(
                   padding: const EdgeInsets.only(
@@ -581,27 +512,28 @@ class _ShopPageState extends State<ShopPage> {
                       child: productController.isLoading.value
                           ? const Center(child: CircularProgressIndicator())
                           : flashSaleItems.isEmpty
-                          ? Center(
-                              child: Text(
-                                'No products available in this category.',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.grey[600],
+                              ? Center(
+                                  child: Text(
+                                    'No products available in this category.',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                )
+                              : ListView.builder(
+                                  itemCount: flashSaleItems.length,
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (context, index) {
+                                    Shoe item = flashSaleItems[index];
+                                    return ShoeTile(
+                                      shoe: item,
+                                      // --- PERUBAHAN UTAMA DI SINI ---
+                                      // Panggil addItemToCart langsung dengan unit default
+                                      onAddTap: () => addItemToCart(item, '1 Kg'), 
+                                    );
+                                  },
                                 ),
-                              ),
-                            )
-                          : ListView.builder(
-                              itemCount: flashSaleItems.length,
-                              scrollDirection: Axis.horizontal,
-                              itemBuilder: (context, index) {
-                                Shoe item = flashSaleItems[index];
-                                return ShoeTile(
-                                  shoe: item,
-                                  onAddTap: () =>
-                                      _showUnitSelectionDialog(item),
-                                );
-                              },
-                            ),
                     ),
                   ),
                 ),

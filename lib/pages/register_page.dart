@@ -1,256 +1,311 @@
-// lib/pages/register_page.dart
 import 'package:flutter/material.dart';
-import 'package:shoenew/pages/home_page.dart';
+import 'package:get/get.dart';
+import '../controllers/registrasi_controller.dart'; 
+// Pastikan path ke RegisterController sudah benar
 
-class RegisterPage extends StatefulWidget {
-  const RegisterPage({super.key});
+class RegisterPage extends StatelessWidget {
+const RegisterPage({super.key});
 
-  @override
-  State<RegisterPage> createState() => _RegisterPageState();
+// Warna kustom
+static const Color primaryGreen = Color(0xFF2E7D32);
+
+@override
+Widget build(BuildContext context) {
+ // 1. Inisialisasi Controller (Get.put)
+ final RegisterController controller = Get.put(RegisterController());
+ const Color primaryGreen = RegisterPage.primaryGreen;
+
+ // 2. Gunakan Obx untuk Reaktivitas
+ return Obx(
+ () => Scaffold(
+  backgroundColor: Colors.grey[200],
+  appBar: AppBar(
+  backgroundColor: Colors.transparent,
+  elevation: 0,
+  leading: IconButton(
+   icon: const Icon(Icons.arrow_back_ios, color: primaryGreen),
+   // Kembali ke halaman sebelumnya (Login/Intro)
+   onPressed: () => Navigator.pop(context),
+  ),
+  ),
+  body: Center(
+  child: SingleChildScrollView(
+   padding: const EdgeInsets.symmetric(horizontal: 25.0),
+   // Menggunakan Form untuk validasi input secara kolektif
+   child: Form(
+   key: controller.formKey,
+   child: Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+    // --- Logo/Branding (Tidak Berubah) ---
+    Padding(
+     padding: const EdgeInsets.only(bottom: 30.0),
+     child: Column(
+     children: [
+      Icon(
+      Icons.local_florist_rounded, 
+      size: 70,
+      color: primaryGreen,
+      ),
+      const SizedBox(height: 8),
+     ],
+     ),
+    ),
+    
+    // --- Judul dan Deskripsi (Tidak Berubah) ---
+    const Text(
+     'Buat Akun Anda!', 
+     style: TextStyle(
+     fontWeight: FontWeight.bold,
+     fontSize: 24,
+     color: primaryGreen, 
+     ),
+    ),
+    const SizedBox(height: 10),
+    Text(
+     'Temukan dan beli sayur serta buah paling segar hanya di sini.', 
+     style: TextStyle(
+     fontSize: 16,
+     color: Colors.grey[700],
+     ),
+     textAlign: TextAlign.center,
+    ),
+    const SizedBox(height: 50),
+        
+         // --- Field Nama Lengkap ---
+    _buildTextFormField(
+     controller: controller.nameController,
+     validator: (value) {
+     if (value == null || value.isEmpty) {
+      return 'Nama lengkap wajib diisi';
+     }
+     return null;
+     },
+     hintText: 'Nama Lengkap',
+     prefixIcon: Icons.person,
+     keyboardType: TextInputType.name,
+     primaryColor: primaryGreen,
+    ),
+    const SizedBox(height: 15),
+
+    // --- Field Nomor Telepon ---
+    _buildTextFormField(
+     controller: controller.phoneController,
+     validator: (value) {
+     if (value == null || value.isEmpty) {
+      return 'Nomor telepon wajib diisi';
+     }
+     return null;
+     },
+     hintText: 'Nomor Telepon',
+     prefixIcon: Icons.phone,
+     keyboardType: TextInputType.phone,
+     primaryColor: primaryGreen,
+    ),
+    const SizedBox(height: 15),
+           
+           // 🆕 --- Field ALAMAT LENGKAP ---
+    _buildTextFormField(
+     controller: controller.addressController,
+     validator: (value) {
+     if (value == null || value.isEmpty) {
+      return 'Alamat wajib diisi';
+     }
+     return null;
+     },
+     hintText: 'Alamat Lengkap',
+     prefixIcon: Icons.location_on,
+           maxLines: 1, // Agar pengguna bisa memasukkan alamat yang lebih panjang
+     keyboardType: TextInputType.streetAddress,
+     primaryColor: primaryGreen,
+    ),
+    const SizedBox(height: 15), // Spasi setelah Alamat
+
+    // --- Field Email ---
+    _buildTextFormField(
+     controller: controller.emailController,
+     validator: controller.validateEmail,
+     hintText: 'Email',
+     prefixIcon: Icons.email,
+     keyboardType: TextInputType.emailAddress,
+     primaryColor: primaryGreen,
+    ),
+    const SizedBox(height: 15),
+
+    // --- Field Kata Sandi ---
+    _buildPasswordFormField(
+     controller: controller.passwordController,
+     validator: controller.validatePassword,
+     hintText: 'Kata Sandi',
+     prefixIcon: Icons.lock,
+     primaryColor: primaryGreen,
+     // isObscure menggunakan Obx
+     isObscure: !controller.isPasswordVisible.value,
+     toggleVisibility: controller.isPasswordVisible.toggle,
+    ),
+    const SizedBox(height: 15),
+
+    // --- Field Konfirmasi Kata Sandi ---
+    _buildPasswordFormField(
+     controller: controller.confirmPasswordController,
+     validator: (value) {
+     // Validasi ganda: memastikan tidak kosong dan cocok dengan password
+     if (value == null || value.isEmpty) {
+      return 'Konfirmasi sandi tidak boleh kosong';
+     }
+     if (value != controller.passwordController.text) {
+      return 'Kata sandi tidak cocok';
+     }
+     return null;
+     },
+     hintText: 'Konfirmasi Kata Sandi',
+     prefixIcon: Icons.lock_reset,
+     primaryColor: primaryGreen,
+     isObscure: !controller.isPasswordVisible.value,
+     toggleVisibility: controller.isPasswordVisible.toggle,
+    ),
+    const SizedBox(height: 30),
+
+    // --- Tombol Daftar (Tidak Berubah) ---
+    ElevatedButton(
+     onPressed: controller.isLoading.value ? null : () {
+     if (controller.formKey.currentState!.validate()) {
+      controller.register(); // Panggil fungsi register di Controller
+     }
+     },
+     style: ElevatedButton.styleFrom(
+     backgroundColor: primaryGreen,
+     foregroundColor: Colors.white,
+     minimumSize: const Size(double.infinity, 55),
+     shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+     ),
+     ),
+     child: controller.isLoading.value
+      ? const CircularProgressIndicator(color: Colors.white) // Tampilkan loading
+      : const Text(
+       'Daftar',
+       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      ),
+    ),
+    const SizedBox(height: 40),
+
+    // --- Teks 'Sudah punya akun?' (Tidak Berubah) ---
+    Row(
+     mainAxisAlignment: MainAxisAlignment.center,
+     children: [
+     Text(
+      'Sudah punya akun?', 
+      style: TextStyle(color: Colors.grey[700]),
+     ),
+     const SizedBox(width: 4),
+     GestureDetector(
+      onTap: () {
+      Navigator.pop(context); // Kembali ke halaman login
+      },
+      child: const Text(
+      'Masuk Sekarang', 
+      style: TextStyle(
+       color: primaryGreen, 
+       fontWeight: FontWeight.bold,
+      ),
+      ),
+     ),
+     ],
+    ),
+    const SizedBox(height: 50),
+    ],
+   ),
+   ),
+  ),
+  ),
+ ),
+ );
 }
 
-class _RegisterPageState extends State<RegisterPage> {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+// --- Widget Pembantu untuk TextFormField Biasa ---
+Widget _buildTextFormField({
+ required TextEditingController controller,
+ required String? Function(String?) validator,
+ required String hintText,
+ required IconData prefixIcon,
+ required Color primaryColor,
+ TextInputType keyboardType = TextInputType.text,
+   int maxLines = 1, // Parameter baru untuk mengizinkan input multiline (khusus alamat)
+}) {
+ return TextFormField(
+ controller: controller,
+ validator: validator,
+ keyboardType: keyboardType,
+    maxLines: maxLines, // Terapkan maxLines
+ decoration: _buildInputDecoration(
+  hintText: hintText,
+  prefixIcon: prefixIcon,
+  primaryColor: primaryColor,
+ ),
+ style: const TextStyle(color: Colors.black),
+ );
+}
 
-  void _handleRegister() {
-    String email = _emailController.text;
-    String password = _passwordController.text;
-    String confirmPassword = _confirmPasswordController.text;
+// --- Widget Pembantu untuk TextFormField Password (Tidak Berubah) ---
+Widget _buildPasswordFormField({
+ required TextEditingController controller,
+ required String? Function(String?) validator,
+ required String hintText,
+ required IconData prefixIcon,
+ required Color primaryColor,
+ required bool isObscure,
+ required Function() toggleVisibility,
+}) {
+ return TextFormField(
+ controller: controller,
+ validator: validator,
+ obscureText: isObscure,
+ decoration: _buildInputDecoration(
+  hintText: hintText,
+  prefixIcon: prefixIcon,
+  primaryColor: primaryColor,
+  suffixIcon: IconButton(
+  icon: Icon(
+   isObscure ? Icons.visibility_off : Icons.visibility,
+   color: Colors.grey[700],
+  ),
+  onPressed: toggleVisibility,
+  ),
+ ),
+ style: const TextStyle(color: Colors.black),
+ );
+}
 
-    if (password != confirmPassword) {
-      print('Passwords do not match!');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Passwords do not match!'),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
-
-    print('Registering with Email: $email, Password: $password');
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const HomePage()),
-    );
-  }
-
-  void _handleGoogleRegister() {
-    print('Register with Google clicked (from RegisterPage)');
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const HomePage()),
-    );
-  }
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[200],
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 25.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 30.0),
-                child: Image.asset(
-                  'lib/images/Logo.png',
-                  height: 100,
-                  color: Colors.black,
-                ),
-              ),
-
-              const Text(
-                'Create Your Account!',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24,
-                  color: Colors.black87,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                'Join us to start your shopping journey.',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[700],
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 50),
-
-              TextField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  hintText: 'Email',
-                  prefixIcon: Icon(Icons.email, color: Colors.grey[700]),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey.shade400),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.black),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  fillColor: Colors.white,
-                  filled: true,
-                ),
-                style: const TextStyle(color: Colors.black),
-              ),
-              const SizedBox(height: 15),
-
-              TextField(
-                controller: _passwordController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  hintText: 'Password',
-                  prefixIcon: Icon(Icons.lock, color: Colors.grey[700]),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey.shade400),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.black),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  fillColor: Colors.white,
-                  filled: true,
-                ),
-                style: const TextStyle(color: Colors.black),
-              ),
-              const SizedBox(height: 15),
-
-              TextField(
-                controller: _confirmPasswordController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  hintText: 'Confirm Password',
-                  prefixIcon: Icon(Icons.lock_reset, color: Colors.grey[700]),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey.shade400),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.black),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  fillColor: Colors.white,
-                  filled: true,
-                ),
-                style: const TextStyle(color: Colors.black),
-              ),
-              const SizedBox(height: 30),
-
-              ElevatedButton(
-                onPressed: _handleRegister,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size(double.infinity, 55),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: const Text(
-                  'Register',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Divider(
-                        thickness: 0.5,
-                        color: Colors.grey[400],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      child: Text(
-                        'Or continue with',
-                        style: TextStyle(color: Colors.grey[700]),
-                      ),
-                    ),
-                    Expanded(
-                      child: Divider(
-                        thickness: 0.5,
-                        color: Colors.grey[400],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              GestureDetector(
-                onTap: _handleGoogleRegister,
-                child: Container(
-                  padding: const EdgeInsets.all(15),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey.shade300),
-                  ),
-                  child: Image.asset(
-                    'lib/images/GoogleIcon.png',
-                    height: 30,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Already have an account?',
-                    style: TextStyle(color: Colors.grey[700]),
-                  ),
-                  const SizedBox(width: 4),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text(
-                      'Login Now',
-                      style: TextStyle(
-                        color: Colors.blue[700],
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 50),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+// --- Fungsi Pembantu untuk Dekorasi Input (Tidak Berubah) ---
+InputDecoration _buildInputDecoration({
+ required String hintText,
+ required IconData prefixIcon,
+ required Color primaryColor,
+ Widget? suffixIcon,
+}) {
+ return InputDecoration(
+ hintText: hintText,
+ prefixIcon: Icon(prefixIcon, color: Colors.grey[700]),
+ suffixIcon: suffixIcon,
+ enabledBorder: OutlineInputBorder(
+  borderSide: BorderSide(color: Colors.grey.shade400),
+  borderRadius: BorderRadius.circular(12),
+ ),
+ focusedBorder: OutlineInputBorder(
+  borderSide: BorderSide(color: primaryColor),
+  borderRadius: BorderRadius.circular(12),
+ ),
+ errorBorder: OutlineInputBorder(
+  borderSide: const BorderSide(color: Colors.red),
+  borderRadius: BorderRadius.circular(12),
+ ),
+ focusedErrorBorder: OutlineInputBorder(
+  borderSide: const BorderSide(color: Colors.red),
+  borderRadius: BorderRadius.circular(12),
+ ),
+ fillColor: Colors.white,
+ filled: true,
+ );
+}
 }

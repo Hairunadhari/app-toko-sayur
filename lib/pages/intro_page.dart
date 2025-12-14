@@ -7,6 +7,9 @@ import 'package:shoenew/pages/register_page.dart';
 class IntroPage extends StatelessWidget {
   const IntroPage({super.key});
 
+  // Mendefinisikan warna hijau kustom
+  static const Color primaryGreen = Color(0xFF2E7D32);
+
   @override
   Widget build(BuildContext context) {
     final LoginController controller = Get.put(LoginController());
@@ -22,26 +25,33 @@ class IntroPage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 50.0),
-                  child: Image.asset(
-                    'lib/images/Logo.png',
-                    height: 120,
-                    color: Colors.black,
-                  ),
-                ),
+               // Menggantikan Widget Padding berisi Image.asset
+Padding(
+  padding: const EdgeInsets.only(bottom: 50.0),
+  child: Column( // Gunakan Column jika ingin menambahkan teks nama toko
+    children: [
+      Icon(
+        Icons.shopping_basket_rounded, // Atau Icons.local_grocery_store
+        size: 80,
+        color: primaryGreen,
+      ),
+      const SizedBox(height: 8),
+    ],
+  ),
+),
 
                 const Text(
-                  'Welcome Back!',
+                  'Selamat Datang Kembali!',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 24,
-                    color: Colors.black87,
+                    // Mengganti Colors.black87 dengan primaryGreen
+                    color: primaryGreen,
                   ),
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  'Login to your account to continue shopping.',
+                  'Masuk ke akun Anda untuk melanjutkan berbelanja.',
                   style: TextStyle(fontSize: 16, color: Colors.grey[700]),
                   textAlign: TextAlign.center,
                 ),
@@ -60,7 +70,8 @@ class IntroPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.black),
+                      // Mengganti const BorderSide(color: Colors.black) dengan primaryGreen
+                      borderSide: const BorderSide(color: primaryGreen),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     errorBorder: OutlineInputBorder(
@@ -103,7 +114,8 @@ class IntroPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Colors.black),
+                        // Mengganti const BorderSide(color: Colors.black) dengan primaryGreen
+                        borderSide: const BorderSide(color: primaryGreen),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       errorBorder: OutlineInputBorder(
@@ -133,7 +145,8 @@ class IntroPage extends StatelessWidget {
                           onChanged: (bool? newValue) {
                             // Add remember me logic if needed
                           },
-                          activeColor: Colors.black,
+                          // Mengganti Colors.black dengan primaryGreen
+                          activeColor: primaryGreen, 
                         ),
                         Text(
                           'Remember Me',
@@ -145,10 +158,11 @@ class IntroPage extends StatelessWidget {
                       onTap: () {
                         print('Forgot Password clicked');
                       },
-                      child: Text(
-                        'Forgot Password?',
+                      child: const Text(
+                        'Lupa Password?',
                         style: TextStyle(
-                          color: Colors.blue[700],
+                          // Mengganti Colors.blue[700] dengan primaryGreen
+                          color: primaryGreen, 
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -164,7 +178,8 @@ class IntroPage extends StatelessWidget {
                         ? null
                         : controller.login,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
+                      // Mengganti Colors.black dengan primaryGreen
+                      backgroundColor: primaryGreen, 
                       foregroundColor: Colors.white,
                       minimumSize: const Size(double.infinity, 55),
                       shape: RoundedRectangleBorder(
@@ -194,49 +209,11 @@ class IntroPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
 
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Divider(thickness: 0.5, color: Colors.grey[400]),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                        child: Text(
-                          'Or continue with',
-                          style: TextStyle(color: Colors.grey[700]),
-                        ),
-                      ),
-                      Expanded(
-                        child: Divider(thickness: 0.5, color: Colors.grey[400]),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-
-                GestureDetector(
-                  onTap: () {
-                    print('Google login clicked');
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(15),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.grey.shade300),
-                    ),
-                    child: Image.asset('lib/images/GoogleIcon.png', height: 30),
-                  ),
-                ),
-                const SizedBox(height: 20),
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Don\'t have an account?',
+                      'Belum mempunyai akun?',
                       style: TextStyle(color: Colors.grey[700]),
                     ),
                     const SizedBox(width: 4),
@@ -244,10 +221,11 @@ class IntroPage extends StatelessWidget {
                       onTap: () {
                         Get.to(() => const RegisterPage());
                       },
-                      child: Text(
-                        'Register Now',
+                      child: const Text(
+                        'Daftar disini',
                         style: TextStyle(
-                          color: Colors.blue[700],
+                          // Mengganti Colors.blue[700] dengan primaryGreen
+                          color: primaryGreen,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

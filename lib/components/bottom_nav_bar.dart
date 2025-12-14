@@ -44,9 +44,10 @@ class MyBottomNavBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           buildNavBarItem(Icons.home, 'Beranda', 0),
-          buildNavBarItem(Icons.shopping_bag, 'Keranjang', 1),
+          buildNavBarItem(Icons.shopping_cart, 'Keranjang', 1),
           buildNavBarItem(Icons.grid_view, 'Produk  ', 2),
-          buildNavBarItem(Icons.person, 'Profile', 3),
+          buildNavBarItem(Icons.receipt_long_outlined, 'Pesanan  ', 3),
+          buildNavBarItem(Icons.person, 'Akun', 4),
         ],
       ),
     );

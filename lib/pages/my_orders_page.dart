@@ -363,22 +363,6 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
 
         return Scaffold(
           backgroundColor: Colors.grey[200],
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-              onPressed: () => Navigator.pop(context),
-            ),
-            title: const Text(
-              'My Orders',
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            centerTitle: true,
-          ),
           body: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 25.0),
             child: Column(
@@ -392,13 +376,13 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(
-                                Icons.shopping_bag_outlined,
+                                Icons.receipt_long_outlined,
                                 size: 80,
                                 color: Colors.grey[400],
                               ),
                               const SizedBox(height: 16),
                               Text(
-                                'No orders yet',
+                                'Belum ada pesanan',
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
@@ -407,7 +391,7 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
                               ),
                               const SizedBox(height: 8),
                               Text(
-                                'Your order history will appear here',
+                                'Riwayat pesanan Anda akan muncul di sini',
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Colors.grey[500],

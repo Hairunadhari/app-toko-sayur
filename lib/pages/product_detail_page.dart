@@ -157,7 +157,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                     const SizedBox(height: 20),
 
                     const Text(
-                      'Select Unit:',
+                      'Pilih Satuan:',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,

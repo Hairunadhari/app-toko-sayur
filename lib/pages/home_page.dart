@@ -3,10 +3,8 @@ import 'package:shoenew/components/bottom_nav_bar.dart';
 import 'package:shoenew/pages/shop_page.dart';
 import 'package:shoenew/pages/cart_page.dart';
 import 'package:shoenew/pages/products_page.dart';
-import 'package:shoenew/pages/settings_page.dart';
 import 'package:shoenew/pages/profile_page.dart';
 import 'package:shoenew/pages/intro_page.dart';
-import 'package:shoenew/pages/wishlist_page.dart';
 import 'package:shoenew/pages/my_orders_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -29,7 +27,7 @@ class _HomePageState extends State<HomePage> {
     const ShopPage(),
     const CartPage(),
     const ProductsPage(),
-    const SettingsPage(),
+    const MyOrdersPage(),
     const ProfilePage(),
   ];
 
@@ -47,13 +45,13 @@ class _HomePageState extends State<HomePage> {
       case 0:
         return 'Toko Buah & Sayur Segar';
       case 1:
-        return 'My Cart';
+        return 'Keranjang';
       case 2:
-        return 'All Products';
+        return 'Produk';
       case 3:
-        return 'Settings';
+        return 'Pesanan';
       case 4:
-        return 'Profile';
+        return 'Akun';
       default:
         return 'ShoeNew App';
     }
@@ -98,39 +96,16 @@ class _HomePageState extends State<HomePage> {
             Column(
               children: [
                 DrawerHeader(
-                  child: Image.asset(
-                    'lib/images/Logo.png',
-                    color: Colors.white,
+                  child: Icon(
+                    Icons.apple, // Menggunakan icon apel
+                    color: Colors.white, // Sesuaikan warna icon
+                    size: 80, // Sesuaikan ukuran icon sesuai kebutuhan
                   ),
                 ),
 
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: Divider(color: Colors.grey[800]),
-                ),
-
-                Padding(
-                  padding: const EdgeInsets.only(left: 25.0),
-                  child: ListTile(
-                    leading: const Icon(
-                      Icons.receipt_long,
-                      color: Colors.white,
-                    ),
-                    title: const Text(
-                      'My Orders',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onTap: () {
-                      Navigator.pop(context);
-
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const MyOrdersPage(),
-                        ),
-                      );
-                    },
-                  ),
                 ),
 
                 Padding(

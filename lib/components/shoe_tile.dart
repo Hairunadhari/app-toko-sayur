@@ -55,10 +55,10 @@ class ShoeTile extends StatelessWidget {
       },
       child: Container(
         margin: const EdgeInsets.only(left: 25),
-        width: 280,
+        width: 225,
         decoration: BoxDecoration(
           color: Colors.grey[300],
-          borderRadius: BorderRadius.circular(25),
+          borderRadius: BorderRadius.circular(15),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,15 +68,20 @@ class ShoeTile extends StatelessWidget {
                 Center(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 15.0, 
-                      vertical: 10.0,
+                      horizontal: 0.0, 
+                      vertical: 0.0,
                     ),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(15),   // Sudut Kiri Atas
+                        topRight: Radius.circular(15),  // Sudut Kanan Atas
+                        // Sudut bawah secara otomatis akan menjadi nol (persegi)
+                      ),
                       child: Image.network(
                         shoe.imagePath,
                         fit: BoxFit.cover,
-                        height: 180,
+                        height: 300,
+                        width: 250,
                         alignment: Alignment.center, 
                         loadingBuilder: (context, child, loadingProgress) {
                           if (loadingProgress == null) return child;
@@ -141,9 +146,9 @@ class ShoeTile extends StatelessWidget {
             // --- BAGIAN DETAIL PRODUK & TOMBOL ADD ---
             Padding(
               padding: const EdgeInsets.only(
-                left: 25.0,
+                left: 20.0,
                 right: 0.0,
-                bottom: 0.0,
+                bottom: 5.0,
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -175,12 +180,12 @@ class ShoeTile extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.all(20),
                       decoration: const BoxDecoration(
-                        color: Colors.black,
+                        color: Color(0xFFCC5500),
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(12),
                           bottomLeft: Radius.circular(0),
                           topRight: Radius.circular(0),
-                          bottomRight: Radius.circular(25),
+                          bottomRight: Radius.circular(12),
                         ),
                       ),
                       child: const Icon(Icons.add, color: Colors.white),

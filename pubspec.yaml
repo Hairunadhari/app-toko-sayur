@@ -25,5 +25,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  # Ini adalah blok aset.
   assets:
-      - lib/images/
+    - lib/images/
