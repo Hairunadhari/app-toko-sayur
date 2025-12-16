@@ -560,7 +560,7 @@ class _CartPageState extends State<CartPage> {
                           ),
                         ),
                         child: const Text(
-                          'Checkout Now', // Mengubah 'Booking Now' menjadi 'Checkout Now'
+                          'Pesan Sekarang  ', // Mengubah 'Booking Now' menjadi 'Checkout Now'
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,

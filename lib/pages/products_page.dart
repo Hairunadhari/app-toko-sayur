@@ -191,7 +191,7 @@ class _ProductsPageState extends State<ProductsPage> {
    imagePath: product.imageUrl,
    gender: _getCategoryFromId(product.categoryId),
 
-   availableSizes: const ['1 Kg', '500 g', '1 Pcs', '1 Bundle'],
+   availableSizes: const ['1 Kg'],
    description: product.description,
   );
  }

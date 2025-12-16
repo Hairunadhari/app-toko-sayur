@@ -8,6 +8,9 @@ import 'dart:async';
 
 import 'package:shoenew/controllers/product_controller.dart';
 import 'package:shoenew/models/product.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+Map<String, dynamic>? profileData;
 
 class ShopPage extends StatefulWidget {
   const ShopPage({super.key});
@@ -91,10 +94,16 @@ final List<Map<String, dynamic>> _bannerData = [
   },
 ];
 
+ final supabase = Supabase.instance.client;
+Map<String, dynamic>? userProfile; // Variabel untuk menyimpan data profil
+bool isProfileLoading = true;
   @override
   void initState() {
     super.initState();
     productController.fetchProducts();
+
+// Ambil data profil saat inisialisasi
+  _loadUserProfile();
 
     _timer = Timer.periodic(const Duration(seconds: 5), (Timer timer) {
       if (_pageController.hasClients) {
@@ -111,6 +120,39 @@ final List<Map<String, dynamic>> _bannerData = [
       }
     });
   }
+
+// Fungsi untuk mendapatkan session dan fetch data
+Future<void> _loadUserProfile() async {
+  final user = supabase.auth.currentUser;
+  if (user != null) {
+    final data = await fetchUserProfile(user.id);
+    if (mounted) {
+      setState(() {
+        userProfile = data;
+        isProfileLoading = false;
+      });
+    }
+  } else {
+    setState(() => isProfileLoading = false);
+  }
+}
+
+// Tambahkan fungsi fetchUserProfile Anda di sini
+Future<Map<String, dynamic>?> fetchUserProfile(String userId) async {
+  try {
+    final response = await supabase
+        .from('users')
+        .select('name, phone, address')
+        .eq('id', userId)
+        .single();
+
+    print('✅ Supabase Fetch SUCCESS. Data: $response');
+    return response as Map<String, dynamic>;
+  } catch (e) {
+    print('❌ Supabase Fetch FAILED. Error: $e');
+    return null;
+  }
+}
 
   @override
   void dispose() {
@@ -131,7 +173,7 @@ final List<Map<String, dynamic>> _bannerData = [
 
       // Satuan unit di Shoe seharusnya tidak diperlukan jika hanya ada satu default
       // Tapi karena struktur data Shoe mengharuskannya, kita biarkan saja.
-      availableSizes: const ['1 Kg', '500 g', '1 Pc'], 
+      availableSizes: const ['1 Kg'], 
       description: product.description,
     );
   }
@@ -217,19 +259,26 @@ final List<Map<String, dynamic>> _bannerData = [
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        'Delivery address',
+                                        'Alamat Pengriman',
                                         style: TextStyle(
                                           color: Colors.grey[600],
                                           fontSize: 14,
                                         ),
                                       ),
                                       Text(
-                                        cart.deliveryAddress,
+                                        // Logika tampilan: Cek loading -> Cek data -> Cek address field
+                                        isProfileLoading 
+                                            ? 'Memuat...' 
+                                            : (userProfile != null && userProfile!['address'] != null)
+                                                ? userProfile!['address']
+                                                : 'Belum diatur',
                                         style: const TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 18,
-                                          color: Colors.grey,
+                                          fontSize: 16, // Ukuran sedikit disesuaikan agar tidak overflow jika alamat panjang
+                                          color: Colors.black87, // Ganti dari grey agar lebih terbaca
                                         ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ],
                                   ),

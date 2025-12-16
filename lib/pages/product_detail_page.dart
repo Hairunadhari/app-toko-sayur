@@ -62,8 +62,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('${widget.shoe.name} (${_selectedUnit!}) added to cart!'),
-        backgroundColor: Colors.black87,
+        content: Text('${widget.shoe.name} (${_selectedUnit!}) berhasil dimasukkan ke keranjang!'),
+        backgroundColor: Color(0xFF2E7D32),
         duration: const Duration(seconds: 2),
       ),
     );
@@ -157,7 +157,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                     const SizedBox(height: 20),
 
                     const Text(
-                      'Pilih Satuan:',
+                      'Satuan Produk:',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
@@ -184,7 +184,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                             ),
                             decoration: BoxDecoration(
                               color: isSelected
-                                  ? Colors.black
+                                  ? Color(0xFFCC5500)
                                   : Colors.grey[300],
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
@@ -218,7 +218,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             child: ElevatedButton(
               onPressed: addItemToCart,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
+                backgroundColor: Color(0xFF2E7D32),
                 foregroundColor: Colors.white,
                 minimumSize: const Size(double.infinity, 60),
                 shape: RoundedRectangleBorder(

@@ -84,23 +84,37 @@ class AuthService {
   /// Supabase berdasarkan User ID.
   /// 
   /// Mengembalikan Map<String, dynamic> yang berisi data profil.
+
   Future<Map<String, dynamic>?> fetchUserProfile(String userId) async {
     try {
-      // Ganti 'profiles' dengan nama tabel profil Anda di Supabase
       final response = await supabase
           .from('users') 
-          .select('name, phone, address, avatar_url') // Sesuaikan kolom yang Anda butuhkan
-          .eq('id', userId) // Asumsi kolom 'id' di tabel profiles adalah User ID
-          .single(); // Ambil satu baris saja
+          .select('name, phone, address')
+          .eq('id', userId)
+          .single(); 
 
-      return response as Map<String, dynamic>;
+      print('✅ Supabase Fetch SUCCESS. Data: $response'); // TAMBAHKAN INI
 
-    } on PostgrestException catch (e) {
-      print('Postgrest Error fetching profile: ${e.message}');
-      return null;
+      final data = response as Map<String, dynamic>;
+      // ... penanganan null ...
+      return data;
     } catch (e) {
-      print('Error fetching user profile: $e');
+      print('❌ Supabase Fetch FAILED. Error: $e'); // TAMBAHKAN INI
       return null;
     }
   }
+
+  Future<void> updateUserProfile({
+    required String userId,
+    required String name,
+    required String phone,
+    required String address,
+  }) async {
+    await supabase.from('users').update({
+      'name': name,
+      'phone': phone,
+      'address': address,
+    }).eq('id', userId);
+  }
+
 }

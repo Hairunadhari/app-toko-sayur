@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
   String _getAppBarTitle() {
     switch (_selectedIndex) {
       case 0:
-        return 'Toko Buah & Sayur Segar';
+        return 'SegarMart';
       case 1:
         return 'Keranjang';
       case 2:
@@ -56,6 +56,7 @@ class _HomePageState extends State<HomePage> {
         return 'ShoeNew App';
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:shoenew/models/cart.dart';
+import '../services/auth_service.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -10,165 +9,126 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  // Inisialisasi controller
+  // ================= CONTROLLER =================
   final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final _addressController = TextEditingController();
 
-  // Variabel untuk melacak apakah controller sudah diisi
-  bool _isInitialized = false;
+  // ================= SERVICE =================
+  final AuthService _authService = AuthService();
 
+  // ================= STATE =================
+  bool _isLoading = true;
+
+  // ================= INIT =================
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Consumer atau Selector akan menangani rebuild jika data berubah
-    final cart = Provider.of<Cart>(context, listen: false);
-
-    // Selalu memperbarui nilainya di sini.
-    _nameController.text = cart.userName;
-    _emailController.text = cart.userEmail;
-    _phoneController.text = cart.userPhone;
-    _addressController.text = cart.deliveryAddress;
+  void initState() {
+    super.initState();
+    _loadProfile();
   }
 
-  @override
-  void dispose() {
-    // Pastikan controller dispose untuk mencegah memory leaks
-    _nameController.dispose();
-    _emailController.dispose();
-    _phoneController.dispose();
-    _addressController.dispose();
-    super.dispose();
+  // ================= LOAD OLD DATA =================
+  Future<void> _loadProfile() async {
+    final user = _authService.getCurrentUser();
+
+    if (user == null) {
+      setState(() => _isLoading = false);
+      return;
+    }
+
+    final profile = await _authService.fetchUserProfile(user.id);
+
+    if (profile != null) {
+      _nameController.text = profile['name'] ?? '';
+      _phoneController.text = profile['phone']?.toString() ?? '';
+      _addressController.text = profile['address'] ?? '';
+    }
+
+    setState(() => _isLoading = false);
   }
 
-  void _saveProfile() {
-    final cart = Provider.of<Cart>(context, listen: false);
-    cart.updateProfile(
-      name: _nameController.text,
-      email: _emailController.text,
-      phone: _phoneController.text,
-      address: _addressController.text,
-    );
+  // ================= SAVE =================
+  Future<void> _saveProfile() async {
+    final user = _authService.getCurrentUser();
+    if (user == null) return;
 
-    // Kembali ke halaman sebelumnya
-    Navigator.pop(context);
+    try {
+      await _authService.updateUserProfile(
+        userId: user.id,
+        name: _nameController.text,
+        phone: _phoneController.text,
+        address: _addressController.text,
+      );
 
-    // Tampilkan notifikasi sukses
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Profile updated successfully!'),
-        backgroundColor: Colors.black87,
-      ),
-    );
+      if (mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Profile berhasil diperbarui'),
+            backgroundColor: Color(0xFF2E7D32),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal menyimpan: $e')),
+      );
+    }
   }
 
+  // ================= UI =================
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: const Text(
-          'Edit Profile',
+          'Edit Akun',
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(25.0),
-        child: ListView( // ListView agar form bisa di-scroll jika keyboard muncul
+        padding: const EdgeInsets.all(25),
+        child: ListView(
           children: [
-            // Nama Lengkap
+            // ================= NAME =================
             TextField(
               controller: _nameController,
-              decoration: InputDecoration(
-                labelText: 'Full Name',
-                labelStyle: TextStyle(color: Colors.grey[700]),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey.shade400),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.black),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                fillColor: Colors.white,
-                filled: true,
-              ),
+              decoration: _inputDecoration('Full Name'),
             ),
             const SizedBox(height: 20),
 
-            // Email
-            TextField(
-              controller: _emailController,
-              keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(
-                labelText: 'Email',
-                labelStyle: TextStyle(color: Colors.grey[700]),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey.shade400),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.black),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                fillColor: Colors.white,
-                filled: true,
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // Phone Number
+            // ================= PHONE =================
             TextField(
               controller: _phoneController,
               keyboardType: TextInputType.phone,
-              decoration: InputDecoration(
-                labelText: 'Phone Number',
-                labelStyle: TextStyle(color: Colors.grey[700]),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey.shade400),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.black),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                fillColor: Colors.white,
-                filled: true,
-              ),
+              decoration: _inputDecoration('Phone Number'),
             ),
             const SizedBox(height: 20),
 
-            // Delivery Address
+            // ================= ADDRESS =================
             TextField(
               controller: _addressController,
-              decoration: InputDecoration(
-                labelText: 'Pesanan dikirim ke',
-                labelStyle: TextStyle(color: Colors.grey[700]),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey.shade400),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.black),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                fillColor: Colors.white,
-                filled: true,
-              ),
-              maxLines: 3, // Multi-line input untuk alamat
+              maxLines: 3,
+              decoration: _inputDecoration('Pesanan dikirim ke'),
             ),
             const SizedBox(height: 30),
 
-            // Save Button
+            // ================= SAVE BUTTON =================
             ElevatedButton(
               onPressed: _saveProfile,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
+                backgroundColor: Color(0xFF2E7D32),
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 18),
                 shape: RoundedRectangleBorder(
@@ -176,13 +136,31 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 ),
               ),
               child: const Text(
-                'Save Changes',
+                'Simpan Perubahan',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  // ================= HELPER =================
+  InputDecoration _inputDecoration(String label) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: TextStyle(color: Colors.grey[700]),
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.grey.shade400),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: const BorderSide(color: Colors.black),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      fillColor: Colors.white,
+      filled: true,
     );
   }
 }

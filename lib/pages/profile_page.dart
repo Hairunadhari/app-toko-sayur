@@ -22,6 +22,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   // State untuk melacak apakah data profil sudah dimuat
   bool _isProfileLoaded = false; 
+  Map<String, dynamic>? profileData;
 
   @override
   void initState() {
@@ -31,56 +32,38 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _loadCurrentUserProfile() async {
-    // Ambil User ID dan Email dari objek Supabase Auth yang sedang aktif
-    final user = supabase.auth.currentUser;
+  final user = supabase.auth.currentUser;
 
-    if (user != null) {
-      final cart = Provider.of<Cart>(context, listen: false);
-      
-      // Ambil data profil dari database menggunakan fungsi fetch yang baru di AuthService
-      // ASUMSI: Anda memindahkan fungsi fetchUserProfile ke AuthService (seperti yang kita bahas sebelumnya)
-      
-      // Ganti logika fetch ke Cart dengan logika fetch dari Service (jika Cart model tidak lagi melakukan fetching)
-      try {
-        // Ambil data profil (Nama, Phone, Address, Avatar) dari Supabase via AuthService
-        final profileData = await AuthService().fetchUserProfile(user.id);
-        
-        if (profileData != null) {
-          // 3. Gunakan updateProfile di model Cart untuk menyimpan data yang sudah di-fetch
-          // Data ini akan digunakan oleh Consumer
-          cart.updateProfile(
-            name: profileData['name'],
-            // Email selalu di-update dari user.email Supabase Auth untuk keandalan
-            email: user.email, 
-            phone: profileData['phone'],
-            address: profileData['address'],
-            avatarUrl: profileData['avatar_url'],
-          );
-        }
-        
-        // PENTING: Anda harus tetap memanggil `cart.initializeUser(user.id)` 
-        // jika ingin memuat keranjang dan riwayat pesanan dari local storage!
-        await cart.initializeUser(user.id);
-
-        setState(() {
-          _isProfileLoaded = true;
-        });
-
-      } catch (e) {
-        print('Gagal memuat profil: $e');
-        // Tetap set loaded agar loading indicator hilang
-        setState(() {
-          _isProfileLoaded = true;
-        });
-      }
-    } else {
-      print('Tidak ada pengguna yang sedang login.');
-      // Jika tidak ada user, pastikan state loading berhenti
-      setState(() {
-        _isProfileLoaded = true;
-      });
-    }
+  if (user == null) {
+    setState(() => _isProfileLoaded = true);
+    return;
   }
+
+  try {
+    final cart = Provider.of<Cart>(context, listen: false);
+
+    final data = await AuthService().fetchUserProfile(user.id);
+
+    if (data != null) {
+      profileData = data;
+
+      cart.updateProfile(
+        name: data['name'],
+        email: user.email,
+        phone: data['phone'],
+        address: data['address'],
+      );
+    }
+
+    await cart.initializeUser(user.id);
+
+  } catch (e) {
+    debugPrint('Gagal memuat profil: $e');
+  }
+
+  setState(() => _isProfileLoaded = true);
+}
+
 
 
   // Fungsi untuk mengedit profil
@@ -94,26 +77,6 @@ class _ProfilePageState extends State<ProfilePage> {
       _loadCurrentUserProfile(); 
     });
   }
-
-  // Fungsi untuk Logout (Menggunakan signOut dari AuthService)
-  void _handleLogout() async {
-      try {
-        await AuthService().signOut(); // Panggil fungsi signOut dari service
-        
-        // Clear data di Cart model setelah logout
-        if (mounted) {
-            Provider.of<Cart>(context, listen: false).clearUserData();
-        }
-
-        // Navigasi ke halaman Login/Intro setelah logout
-        if (mounted) {
-          Navigator.pushNamedAndRemoveUntil(context, '/intro', (route) => false); 
-        }
-      } catch (e) {
-        print('Gagal Logout: $e');
-      }
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -140,20 +103,19 @@ class _ProfilePageState extends State<ProfilePage> {
                     children: [
                       CircleAvatar(
                         radius: 70,
-                        backgroundImage: NetworkImage(
-                           cart.userAvatarUrl.isNotEmpty ? cart.userAvatarUrl : 'https://i.pravatar.cc/150', 
-                        ),
+                        backgroundImage: const AssetImage('lib/images/avt.png'),
                       ),
                       const SizedBox(height: 20),
-                      Text(
-                        // Ambil dari Cart model yang sudah di-update oleh Service
-                        cart.userName.isNotEmpty ? cart.userName : 'Pengguna Baru', 
-                        style: const TextStyle(
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
+                     Text(
+                      profileData?['name']?.isNotEmpty == true
+                          ? profileData!['name']
+                          : 'Pengguna Baru',
+                      style: const TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.bold,
                       ),
+                    ),
+
                       const SizedBox(height: 5),
                       Text(
                         // Ambil email yang paling akurat: dari Supabase Auth User (jika ada) atau dari Cart model
@@ -200,23 +162,23 @@ class _ProfilePageState extends State<ProfilePage> {
                       ListTile(
                         leading: const Icon(Icons.phone),
                         title: const Text('Nomor Telpon'),
-                        subtitle: Text(cart.userPhone.isNotEmpty ? cart.userPhone : 'Belum diatur'), 
+                        subtitle: Text(profileData?['phone']?.toString() ?? 'Belum diatur'),
                         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                         onTap: _editProfile,
                       ),
+
                       ListTile(
                         leading: const Icon(Icons.location_on),
                         title: const Text('Alamat Pengiriman'),
-                        subtitle: Text(cart.deliveryAddress.isNotEmpty ? cart.deliveryAddress : 'Belum diatur'), 
+                        subtitle: Text(
+                          profileData?['address'] != null && profileData!['address'].toString().isNotEmpty
+                              ? profileData!['address']
+                              : 'Belum diatur',
+                        ),
                         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                         onTap: _editProfile,
                       ),
-                      // Tombol Logout
-                      ListTile(
-                        leading: const Icon(Icons.logout, color: Colors.red),
-                        title: const Text('Logout', style: TextStyle(color: Colors.red)),
-                        onTap: _handleLogout,
-                      ),
+
                     ],
                   ),
                 ),
