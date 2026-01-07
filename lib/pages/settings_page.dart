@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shoenew/pages/profile_card.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -15,133 +16,47 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[300],
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text(
-          'Settings',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(25.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 10),
-
-            // Opsi Pengaturan Umum
-            ListTile(
-              leading: const Icon(Icons.dark_mode),
-              title: const Text('Dark Mode'),
-              trailing: Switch(
-                value: _darkModeEnabled,
-                onChanged: (value) {
-                  setState(() {
-                    _darkModeEnabled = value;
-                    // TODO: Implementasi logika untuk mengganti tema aplikasi
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Dark Mode: ${value ? "On" : "Off"}'),
-                      ),
-                    );
-                  });
-                },
-              ),
-              onTap: () {
-                // Toggle switch saat ListTile diklik
-                setState(() {
-                  _darkModeEnabled = !_darkModeEnabled;
-                  // TODO: Implementasi logika untuk mengganti tema aplikasi
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'Dark Mode: ${_darkModeEnabled ? "On" : "Off"}',
-                      ),
-                    ),
-                  );
-                });
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.notifications),
-              title: const Text('Enable Notifications'),
-              trailing: Switch(
-                value: _notificationsEnabled,
-                onChanged: (value) {
-                  setState(() {
-                    _notificationsEnabled = value;
-                    // TODO: Implementasi logika untuk mengelola notifikasi
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          'Notifications: ${value ? "Enabled" : "Disabled"}',
-                        ),
-                      ),
-                    );
-                  });
-                },
-              ),
-              onTap: () {
-                setState(() {
-                  _notificationsEnabled = !_notificationsEnabled;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'Notifications: ${_notificationsEnabled ? "Enabled" : "Disabled"}',
-                      ),
-                    ),
-                  );
-                });
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.language),
-              title: const Text('Language'),
-              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-              onTap: () {
-                // TODO: Navigasi ke halaman pemilihan bahasa
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Navigate to Language Settings'),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.privacy_tip),
-              title: const Text('Privacy Policy'),
-              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-              onTap: () {
-                // TODO: Tampilkan Privacy Policy
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Show Privacy Policy')),
-                );
-              },
-            ),
-            const Divider(),
-            const Divider(),
-
-            // Opsi Akun
-            ListTile(
-              leading: const Icon(Icons.password),
-              title: const Text('Change Password'),
-              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-              onTap: () {
-                // TODO: Navigasi ke halaman ganti password
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Navigate to Change Password')),
-                );
-              },
-            ),
-          ],
-        ),
+      body: ListView.builder(
+        itemCount: dummyStudents.length,
+        padding: const EdgeInsets.all(16),
+        itemBuilder: (context, index) {
+          final student = dummyStudents[index];
+          return ProfileCard(
+            image: student.image,
+            name: student.name,
+            npm: student.npm,
+          );
+        },
       ),
     );
   }
 }
+
+class Student {
+  final String name;
+  final String npm;
+  final String image;
+
+  Student({required this.name, required this.npm, required this.image});
+}
+
+final List<Student> dummyStudents = [
+  Student(name: 'Glenny Christo', npm: '19232544', image: 'lib/images/m1.jpg'),
+  Student(
+    name: 'Sifa Aulia Rahmah',
+    npm: '19232349',
+    image: 'lib/images/m2.jpeg',
+  ),
+  Student(name: 'Yanuar Fahri', npm: '19231133', image: 'lib/images/m3.jpeg'),
+  Student(
+    name: 'Ratih Ihdahayuningsih',
+    npm: '19232492',
+    image: 'lib/images/m4.jpeg',
+  ),
+  Student(
+    name: 'Samuel Jason Rain',
+    npm: '19232208',
+    image: 'lib/images/m5.jpeg',
+  ),
+  Student(name: 'Hairun Adhari', npm: '19231404', image: 'lib/images/m6.jpeg'),
+];
